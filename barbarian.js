@@ -35,7 +35,7 @@ class Barbarian {
         this.animations.push(new AnimationGroup(this.spritesheet, 80 * 32, 0, 32, 32, 6, 0.09, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 104 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 120 * 32, 0, 32, 32, 20, 0.09, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 140 * 32, 0, 32, 32, 11, 0.06, false, true));
+        this.animations.push(new AnimationGroup(this.spritesheet, 140 * 32, 0, 32, 32, 11, 0.1, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 184 * 32, 0, 32, 32, 17, 0.09, false, true));
 
         // // idle animations
@@ -110,30 +110,28 @@ class Barbarian {
             newVelX = newVelX > 0 ? diagonalVel : -diagonalVel;
             newVelY = newVelY > 0 ? diagonalVel : -diagonalVel;
         } 
+        
+        this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
+        this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
 
         if (this.battleCryTimer === 0) {
             this.state = this.velocity.x === 0 && this.velocity.y === 0 ? 0 : 1;
         }
-        
-        this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
-        this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
 
         if (this.game.clicked) {
             let mousePoint = this.game.mouse ? this.game.mouse : this.game.click;
             this.facing[0] = mousePoint.y < this.BB.center.y - this.game.camera.y ? 1 : 0;
             this.facing[1] = mousePoint.x < this.BB.center.x - this.game.camera.x ? 1 : 0; 
-            // console.log(this.battleCryCooldown);
-            if (this.battleCryCooldown === 0 && this.battleCryFlag) {
-                this.state = 5;
-                this.battleCryFlag = false;
-                this.battleCryTimer = 0.66;
-                this.battleCryCooldown = 10;
-            } else if (this.battleCryTimer === 0) {
+            if (this.battleCryTimer === 0) {
                 this.state = 2;
             }
         }
 
-        this.battleCryFlag = this.state !== 2 && this.state !== 5;
+        if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0) {
+            this.state = 5;
+            this.battleCryTimer = 1;
+            this.battleCryCooldown = 10;
+        }
 
         if (this.state !== prevState) {
             this.animations[prevState].reset();

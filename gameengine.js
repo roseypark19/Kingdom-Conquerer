@@ -15,7 +15,7 @@ class GameEngine {
         this.right = false;
         this.up = false;
         this.down = false;
-        this.charge = false;
+        this.specialR = false;
         this.clicked = false;
     };
 
@@ -63,7 +63,7 @@ class GameEngine {
                     that.down = true;
                     break;
                 case "KeyR":
-                    that.charge = true;
+                    that.specialR = true;
                     break;
             }
         }, false);
@@ -92,7 +92,7 @@ class GameEngine {
                     that.down = false;
                     break;
                 case "KeyR":
-                    that.charge = false;
+                    that.specialR = false;
                     break;
             }
         }, false);
