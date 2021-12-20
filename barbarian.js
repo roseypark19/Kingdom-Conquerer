@@ -12,6 +12,7 @@ class Barbarian {
         this.battleCryCooldown = 0;
 
         this.thunderStrikeTimer = 0;
+        this.thunderStrikeFlag = false;
         this.thunderStrikeCooldown = 0;
 
         this.velocityConstant = 4;
@@ -22,66 +23,20 @@ class Barbarian {
     };
 
     loadAnimations() {
-        // for (let i = 0; i < 7; i++) { // 7 states
-        //     this.animations.push([]);
-            // for (let j = 0; j < 2; j++) { // 2 vertical facings
-            //     this.animations[i].push([]);
-            //     for (let k = 0; k < 2; k++) { // 2 horizontal facings
-            //         this.animations[i][j].push([]);
-            //     }
-            // }  
-        // }
         this.animations.push(new AnimationGroup(this.spritesheet, 0, 0, 32, 32, 16, 0.12, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 64 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 80 * 32, 0, 32, 32, 6, 0.09, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 104 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 120 * 32, 0, 32, 32, 20, 0.09, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 140 * 32, 0, 32, 32, 11, 0.1, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 184 * 32, 0, 32, 32, 17, 0.11, false, true));
-
-        // // idle animations
-        // this.animations[0][0][0] = new Animator(this.spritesheet, 0, 0, 32, 32, 16, 0.12, false, true);
-        // this.animations[0][0][1] = new Animator(this.spritesheet, 16 * 32, 0, 32, 32, 16, 0.12, false, true);
-        // this.animations[0][1][0] = new Animator(this.spritesheet, 32 * 32, 0, 32, 32, 16, 0.12, false, true);
-        // this.animations[0][1][1] = new Animator(this.spritesheet, 48 * 32, 0, 32, 32, 16, 0.12, false, true);
-
-        // // walking animations
-        // this.animations[1][0][0] = new Animator(this.spritesheet, 64 * 32, 0, 32, 32, 4, 0.15, false, true);
-        // this.animations[1][0][1] = new Animator(this.spritesheet, 68 * 32, 0, 32, 32, 4, 0.15, false, true);
-        // this.animations[1][1][0] = new Animator(this.spritesheet, 72 * 32, 0, 32, 32, 4, 0.15, false, true);
-        // this.animations[1][1][1] = new Animator(this.spritesheet, 76 * 32, 0, 32, 32, 4, 0.15, false, true);
-
-        // // shooting animations
-        // this.animations[2][0][0] = new Animator(this.spritesheet, 80 * 32, 0, 32, 32, 6, 0.09, false, true);
-        // this.animations[2][0][1] = new Animator(this.spritesheet, 86 * 32, 0, 32, 32, 6, 0.09, false, true);
-        // this.animations[2][1][0] = new Animator(this.spritesheet, 92 * 32, 0, 32, 32, 6, 0.09, false, true);
-        // this.animations[2][1][1] = new Animator(this.spritesheet, 98 * 32, 0, 32, 32, 6, 0.09, false, true);
-
-        // // damaged animations
-        // this.animations[3][0][0] = new Animator(this.spritesheet, 104 * 32, 0, 32, 32, 4, 0.15, false, true);
-        // this.animations[3][0][1] = new Animator(this.spritesheet, 108 * 32, 0, 32, 32, 4, 0.15, false, true);
-        // this.animations[3][1][0] = new Animator(this.spritesheet, 112 * 32, 0, 32, 32, 4, 0.15, false, true);
-        // this.animations[3][1][1] = new Animator(this.spritesheet, 116 * 32, 0, 32, 32, 4, 0.15, false, true);
-
-        // // dead animation
-        // this.animations[4][0][0] = new Animator(this.spritesheet, 120 * 32, 0, 32, 32, 20, 0.09, false, true);
-
-        // // battle cry animations
-        // this.animations[5][0][0] = new Animator(this.spritesheet, 140 * 32, 0, 32, 32, 11, 0.09, false, true);
-        // this.animations[5][0][1] = new Animator(this.spritesheet, 151 * 32, 0, 32, 32, 11, 0.09, false, true);
-        // this.animations[5][1][0] = new Animator(this.spritesheet, 162 * 32, 0, 32, 32, 11, 0.09, false, true);
-        // this.animations[5][1][1] = new Animator(this.spritesheet, 173 * 32, 0, 32, 32, 11, 0.09, false, true);
-
-        // // thunder strike cry animations
-        // this.animations[6][0][0] = new Animator(this.spritesheet, 184 * 32, 0, 32, 32, 17, 0.09, false, true);
-        // this.animations[6][0][1] = new Animator(this.spritesheet, 201 * 32, 0, 32, 32, 17, 0.09, false, true);
-        // this.animations[6][1][0] = new Animator(this.spritesheet, 218 * 32, 0, 32, 32, 17, 0.09, false, true);
-        // this.animations[6][1][1] = new Animator(this.spritesheet, 235 * 32, 0, 32, 32, 17, 0.09, false, true);
+        this.animations.push(new AnimationGroup(this.spritesheet, 184 * 32, 0, 32, 32, 17, 0.1, false, true));
     };
     
     update() {
 
         let prevState = this.state;
+
+        this.originalCollisionBB = this.collisionBB;
 
         this.facing[0] = 0;
 
@@ -111,12 +66,23 @@ class Barbarian {
             newVelX = newVelX > 0 ? diagonalVel : -diagonalVel;
             newVelY = newVelY > 0 ? diagonalVel : -diagonalVel;
         } 
+
+        this.velocity.x = newVelX;
+        this.velocity.y = newVelY;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.updateBB();
         
         this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
         this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
 
         this.thunderStrikeCooldown = Math.max(0, this.thunderStrikeCooldown - this.game.clockTick);
         this.thunderStrikeTimer = Math.max(0, this.thunderStrikeTimer - this.game.clockTick);
+
+        if (this.thunderStrikeTimer <= 0.1 && this.thunderStrikeTimer > 0 && this.thunderStrikeFlag) {
+            this.thunderStrikeFlag = false;
+            this.spawnBeams();
+        }
 
         if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
             this.state = this.velocity.x === 0 && this.velocity.y === 0 ? 0 : 1;
@@ -134,27 +100,21 @@ class Barbarian {
         if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
             this.state = 5;
             this.battleCryTimer = 1.1;
-            this.battleCryCooldown = 10;
+            this.battleCryCooldown = 0;
         }
 
         if (this.game.specialF && this.thunderStrikeCooldown === 0 && this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
             this.state = 6;
-            this.thunderStrikeTimer = 1.87;
-            this.thunderStrikeCooldown = 10;
+            this.thunderStrikeFlag = true;
+            this.thunderStrikeTimer = 1.7;
+            this.thunderStrikeCooldown = 0;
         }
 
         if (this.state !== prevState) {
             this.animations[prevState].reset();
         }
 
-        this.velocity.x = newVelX;
-        this.velocity.y = newVelY;
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
-
         // collision detection and resolve
-        this.originalCollisionBB = this.collisionBB;
-        this.updateBB();
         let collisionList = [];
 
         let that = this;
@@ -176,6 +136,19 @@ class Barbarian {
         }
     };
 
+    spawnBeams() {
+        let center = this.BB.center;
+        for (let theta = 2 * Math.PI; theta > 0; theta -= Math.PI / 4) {
+            let beamCenter = { x: center.x + 32 * PARAMS.SCALE * Math.sign(Math.round(Math.cos(theta))) / 2, 
+                               y: center.y + 32 * PARAMS.SCALE * Math.sign(Math.round(Math.sin(theta))) / 2 };                 
+            this.game.addEntity(new Beam(this.game, 
+                                         beamCenter.x - 32 * PARAMS.SCALE / 2,
+                                         beamCenter.y - 32 * PARAMS.SCALE / 2,
+                                         ASSET_MANAGER.getAsset("./sprites/barbarian/beams.png"), 
+                                         theta));
+        }
+    };
+
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
         this.hitBB = new BoundingBox(this.x + 12 * PARAMS.SCALE, this.y + 12 * PARAMS.SCALE, 8 * PARAMS.SCALE, 8 * PARAMS.SCALE);
@@ -183,8 +156,6 @@ class Barbarian {
     };
     
     draw(ctx) {
-        // this.animations[this.state][this.facing[0]][this.facing[1]]
-        //     .drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE);
         this.animations[this.state].drawFrame(
             this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE, this.facing[0], this.facing[1]);
 
@@ -196,12 +167,46 @@ class Barbarian {
             ctx.strokeRect(this.collisionBB.x - this.game.camera.x, this.collisionBB.y - this.game.camera.y, this.collisionBB.width, this.collisionBB.height);
         }
     };
+};
 
-    // checkAnimationChange(originalAnim) {
-    //     let diff = [originalAnim[0] - this.state, originalAnim[1] - this.facing[0], originalAnim[2] - this.facing[1]];
-    //     if (diff[0] !== 0 || diff[1] !== 0 || diff[2] !== 0) {
-    //         this.animations[originalAnim[0]][originalAnim[1]][originalAnim[2]].reset();
-    //     }
-    // };
+class Beam {
+
+    constructor(game, x, y, spritesheet, theta) {
+        Object.assign(this, { game, x, y, spritesheet, theta });
+        this.velocityConstant = 10;
+        this.velocity = { x: Math.round(Math.cos(theta)) === 0 ? 0 : this.velocityConstant * Math.sign(Math.cos(theta)),
+                          y: Math.round(Math.sin(theta)) === 0 ? 0 : this.velocityConstant * Math.sign(Math.sin(theta)) };
+        this.lifetime = 1;
+        this.animation = new AnimationGroup(this.spritesheet, 32 * 4 * (this.theta / (Math.PI / 4) - 1), 0, 32, 32, 4, 0.08, false, true);
+        this.updateBB();
+    };
+
+    update() {
+        this.lifetime -= this.game.clockTick;
+        if (this.lifetime <= 0) {
+            this.removeFromWorld = true;
+        } else {
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+            this.updateBB();
+        }
+    };
+
+    updateBB() {
+        this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
+        this.collisionBB = new BoundingBox(this.x + 12 * PARAMS.SCALE, this.y + 12 * PARAMS.SCALE, 8 * PARAMS.SCALE, 8 * PARAMS.SCALE);
+    };
+
+    draw(ctx) {
+        this.animation.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE);
+
+        if (PARAMS.DEBUG) {
+            ctx.lineWidth = PARAMS.DEBUG_WIDTH;
+            ctx.strokeStyle = PARAMS.DEBUG_COLOR;
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.collisionBB.x - this.game.camera.x, this.collisionBB.y - this.game.camera.y, this.collisionBB.width, this.collisionBB.height);
+        }
+    };
+
 };
 

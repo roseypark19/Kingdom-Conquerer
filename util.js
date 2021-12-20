@@ -5,7 +5,7 @@ const PARAMS = {
     DEBUG_COLOR: "Red",
     CANVAS_WIDTH : 900,
     CANVAS_HEIGHT : 900,
-    SCALE : 5
+    SCALE : 4
 };
 
 
