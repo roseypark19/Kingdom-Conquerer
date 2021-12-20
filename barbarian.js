@@ -7,11 +7,12 @@ class Barbarian {
                         // 0, 1, 2, 3, 4, 5, 6
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.thunderStrikeTimer = 0;
 
         this.battleCryTimer = 0;
         this.battleCryCooldown = 0;
-        this.battleCryFlag = true;
+
+        this.thunderStrikeTimer = 0;
+        this.thunderStrikeCooldown = 0;
 
         this.velocityConstant = 4;
         this.velocity = { x : 0, y : 0 };
@@ -36,7 +37,7 @@ class Barbarian {
         this.animations.push(new AnimationGroup(this.spritesheet, 104 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 120 * 32, 0, 32, 32, 20, 0.09, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 140 * 32, 0, 32, 32, 11, 0.1, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 184 * 32, 0, 32, 32, 17, 0.09, false, true));
+        this.animations.push(new AnimationGroup(this.spritesheet, 184 * 32, 0, 32, 32, 17, 0.11, false, true));
 
         // // idle animations
         // this.animations[0][0][0] = new Animator(this.spritesheet, 0, 0, 32, 32, 16, 0.12, false, true);
@@ -114,7 +115,10 @@ class Barbarian {
         this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
         this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
 
-        if (this.battleCryTimer === 0) {
+        this.thunderStrikeCooldown = Math.max(0, this.thunderStrikeCooldown - this.game.clockTick);
+        this.thunderStrikeTimer = Math.max(0, this.thunderStrikeTimer - this.game.clockTick);
+
+        if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
             this.state = this.velocity.x === 0 && this.velocity.y === 0 ? 0 : 1;
         }
 
@@ -122,15 +126,21 @@ class Barbarian {
             let mousePoint = this.game.mouse ? this.game.mouse : this.game.click;
             this.facing[0] = mousePoint.y < this.BB.center.y - this.game.camera.y ? 1 : 0;
             this.facing[1] = mousePoint.x < this.BB.center.x - this.game.camera.x ? 1 : 0; 
-            if (this.battleCryTimer === 0) {
+            if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
                 this.state = 2;
             }
         }
 
-        if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0) {
+        if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
             this.state = 5;
-            this.battleCryTimer = 1;
+            this.battleCryTimer = 1.1;
             this.battleCryCooldown = 10;
+        }
+
+        if (this.game.specialF && this.thunderStrikeCooldown === 0 && this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
+            this.state = 6;
+            this.thunderStrikeTimer = 1.87;
+            this.thunderStrikeCooldown = 10;
         }
 
         if (this.state !== prevState) {
