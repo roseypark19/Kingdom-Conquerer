@@ -73,6 +73,8 @@ class Barbarian {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
         this.updateBB();
+
+        this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
         
         this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
         this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
@@ -87,7 +89,7 @@ class Barbarian {
             this.spawnBeams();
         }
 
-        if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
+        if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.damagedTimer === 0) {
             this.state = this.velocity.x === 0 && this.velocity.y === 0 ? 0 : 1;
         }
 
@@ -114,10 +116,6 @@ class Barbarian {
             this.thunderStrikeCooldown = 1.7;
         }
 
-        if (this.state !== prevState) {
-            this.animations[prevState].reset();
-        }
-
         // collision detection and resolve
         let collisionList = [];
 
@@ -125,6 +123,14 @@ class Barbarian {
         this.game.entities.forEach(function(entity) {
             if (entity.collideable && that.collisionBB.collide(entity.BB)) { 
                 collisionList.push(entity);
+            }
+            if (entity.friendlyProjectile === false && that.hitBB.collide(entity.hitBB)) {
+                if (that.damagedTimer === 0 && that.battleCryTimer === 0 && that.thunderStrikeTimer === 0) {
+                    that.damagedTimer = 0.6;
+                    that.state = 3;
+                }
+                // take damage here
+                entity.removeFromWorld = true;
             }
         });
 
@@ -137,6 +143,10 @@ class Barbarian {
                     this.updateBB();
                 }
             }
+        }
+
+        if (this.state !== prevState) {
+            this.animations[prevState].reset();
         }
     };
 
@@ -177,6 +187,7 @@ class Beam {
 
     constructor(game, x, y, spritesheet, theta) {
         Object.assign(this, { game, x, y, spritesheet, theta });
+        this.friendlyProjectile = true;
         this.velocityConstant = 10;
         this.velocity = { x: Math.round(Math.cos(theta)) === 0 ? 0 : this.velocityConstant * Math.sign(Math.cos(theta)),
                           y: Math.round(Math.sin(theta)) === 0 ? 0 : this.velocityConstant * Math.sign(Math.sin(theta)) };
@@ -198,7 +209,7 @@ class Beam {
 
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
-        this.collisionBB = new BoundingBox(this.x + 12 * PARAMS.SCALE, this.y + 12 * PARAMS.SCALE, 8 * PARAMS.SCALE, 8 * PARAMS.SCALE);
+        this.hitBB = new BoundingBox(this.x + 12 * PARAMS.SCALE, this.y + 12 * PARAMS.SCALE, 8 * PARAMS.SCALE, 8 * PARAMS.SCALE);
     };
 
     draw(ctx) {
@@ -208,7 +219,7 @@ class Beam {
             ctx.lineWidth = PARAMS.DEBUG_WIDTH;
             ctx.strokeStyle = PARAMS.DEBUG_COLOR;
             ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-            ctx.strokeRect(this.collisionBB.x - this.game.camera.x, this.collisionBB.y - this.game.camera.y, this.collisionBB.width, this.collisionBB.height);
+            ctx.strokeRect(this.hitBB.x - this.game.camera.x, this.hitBB.y - this.game.camera.y, this.hitBB.width, this.hitBB.height);
         }
     };
 

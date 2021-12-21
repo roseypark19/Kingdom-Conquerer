@@ -10,6 +10,8 @@ class SceneManager {
     loadLevel() {
         this.hero = new Barbarian(this.game, 200, 200, ASSET_MANAGER.getAsset("./sprites/barbarian/barbarian.png"));
         this.game.addEntity(this.hero);
+
+        this.game.addEntity(new BabySlime(this.game, 250, 250, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
     };
 
     update() {
