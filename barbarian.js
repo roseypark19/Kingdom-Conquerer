@@ -125,7 +125,7 @@ class Barbarian {
                 collisionList.push(entity);
             }
             if (entity.friendlyProjectile === false && that.hitBB.collide(entity.hitBB)) {
-                if (that.damagedTimer === 0 && that.battleCryTimer === 0 && that.thunderStrikeTimer === 0) {
+                if (that.damagedTimer === 0 && that.battleCryTimer === 0 && that.thunderStrikeTimer === 0 && that.state !== 2) {
                     that.damagedTimer = 0.6;
                     that.state = 3;
                 }
