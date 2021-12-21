@@ -116,7 +116,7 @@ class Barbarian {
             if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
                 this.state = 2;
                 if (this.shootTimer === 0) {
-                    this.shootTimer = this.animations[2].frameDuration * 6;
+                    this.shootTimer = this.animations[2].frameDuration * 6 / 2;
                     this.game.addEntity(new DamageRegion(this.game, 
                                                          this.facing[1] === 0 ? this.BB.center.x : this.BB.x,
                                                          this.facing[0] === 0 ? this.BB.center.y : this.BB.y,
