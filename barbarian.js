@@ -17,7 +17,7 @@ class Barbarian {
 
         this.velocityConstant = 4;
         this.velocity = { x : 0, y : 0 };
-        this.dexterityConstant = 0.09;
+        this.dexterityConstant = 0.1;
         this.animations = [];
         this.updateBB();
         this.loadAnimations();
