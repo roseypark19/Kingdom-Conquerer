@@ -111,7 +111,7 @@ class Barbarian {
             this.state = 6;
             this.thunderStrikeFlag = true;
             this.thunderStrikeTimer = 1.7;
-            this.thunderStrikeCooldown = 5;
+            this.thunderStrikeCooldown = 1.7;
         }
 
         if (this.state !== prevState) {
