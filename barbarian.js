@@ -17,6 +17,7 @@ class Barbarian {
 
         this.velocityConstant = 4;
         this.velocity = { x : 0, y : 0 };
+        this.dexterityConstant = 0.09;
         this.animations = [];
         this.updateBB();
         this.loadAnimations();
@@ -25,7 +26,7 @@ class Barbarian {
     loadAnimations() {
         this.animations.push(new AnimationGroup(this.spritesheet, 0, 0, 32, 32, 16, 0.12, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 64 * 32, 0, 32, 32, 4, 0.15, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 80 * 32, 0, 32, 32, 6, 0.09, false, true));
+        this.animations.push(new AnimationGroup(this.spritesheet, 80 * 32, 0, 32, 32, 6, this.dexterityConstant, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 104 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 120 * 32, 0, 32, 32, 20, 0.09, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 140 * 32, 0, 32, 32, 11, 0.1, false, true));
@@ -76,6 +77,8 @@ class Barbarian {
         this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
         this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
 
+        this.animations[2].setFrameDuration(this.battleCryCooldown === 0 ? this.dexterityConstant : this.dexterityConstant / 2);
+
         this.thunderStrikeCooldown = Math.max(0, this.thunderStrikeCooldown - this.game.clockTick);
         this.thunderStrikeTimer = Math.max(0, this.thunderStrikeTimer - this.game.clockTick);
 
@@ -99,15 +102,16 @@ class Barbarian {
 
         if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
             this.state = 5;
+            this.animations[2].setFrameDuration(this.dexterityConstant / 2);
             this.battleCryTimer = 1.1;
-            this.battleCryCooldown = 0;
+            this.battleCryCooldown = 5;
         }
 
         if (this.game.specialF && this.thunderStrikeCooldown === 0 && this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
             this.state = 6;
             this.thunderStrikeFlag = true;
             this.thunderStrikeTimer = 1.7;
-            this.thunderStrikeCooldown = 0;
+            this.thunderStrikeCooldown = 5;
         }
 
         if (this.state !== prevState) {

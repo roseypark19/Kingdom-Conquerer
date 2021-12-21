@@ -37,7 +37,6 @@ class AnimationGroup {
     constructor(spritesheet, xStart, yStart, width, height, frameCount, frameDuration, reverse, loop) {
         Object.assign(this, { spritesheet, xStart, yStart, width, height, frameCount, frameDuration, reverse, loop });
         this.elapsedTime = 0;
-        this.totalTime = this.frameCount * this.frameDuration;
     };
 
     drawFrame(tick, ctx, x, y, scale, vertFace = 0, horizFace = 0) {
@@ -45,7 +44,7 @@ class AnimationGroup {
 
         if (this.isDone()) {
             if (this.loop) {
-                this.elapsedTime -= this.totalTime;
+                this.reset();
             } else {
                 return;
             }
@@ -63,10 +62,17 @@ class AnimationGroup {
     };
 
     isDone() {
-        return this.elapsedTime >= this.totalTime;
+        return this.elapsedTime >= this.frameCount * this.frameDuration;
     };
 
     reset() {
         this.elapsedTime = 0;
+    };
+
+    setFrameDuration(duration) {
+        if (this.frameDuration !== duration) {
+            this.reset();
+        }
+        this.frameDuration = duration;
     };
 };
