@@ -8,7 +8,7 @@ class BabySlime {
                         // 0, 1, 2, 3
         this.minProximity = 2;
         this.attackDistance = 300;
-        this.shotCooldown = 0;
+        this.shootTimer = 0;
         this.projectile = null;
         // this.attackTimer = 0;
         // this.attackCooldown = 0;
@@ -37,12 +37,12 @@ class BabySlime {
     update() {
 
         let prevState = this.state;
-        this.shotCooldown = Math.max(0, this.shotCooldown - this.game.clockTick);
+        this.shootTimer = Math.max(0, this.shootTimer - this.game.clockTick);
+        this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
 
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
-        this.state = 0;
         let center = this.BB.center;
         this.game.entities.forEach(entity => {
             if (entity instanceof Barbarian) {
@@ -57,11 +57,13 @@ class BabySlime {
                         this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
                         this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
                     }
-                    this.state = 1;
-                    if (this.shotCooldown === 0) {
-                        this.shotCooldown = 0.3;
+                    if (this.damagedTimer === 0) {
+                        this.state = 1;
+                    }
+                    if (this.shootTimer === 0) {
+                        this.shootTimer = 0.6;
                         this.game.addEntity(new DamageRegion(
-                            this.game, this.hitBB.x, this.hitBB.y, this.hitBB.width, this.hitBB.height, false, 20, 0.3));
+                            this.game, this.hitBB.x, this.hitBB.y, this.hitBB.width, this.hitBB.height, false, 20, 0.1));
                     }
                 }
             }
@@ -69,7 +71,20 @@ class BabySlime {
         
         this.x += this.velocity.x;
         this.y += this.velocity.y;
+        if (this.damagedTimer === 0 && magnitude(this.velocity) === 0) {
+            this.state = 0;
+        }
         this.updateBB();
+
+        this.game.entities.forEach(entity => {
+            if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB)) {
+                if (this.damagedTimer === 0 && this.deadTimer === 0) {
+                    this.damagedTimer = 0.6;
+                    this.state = 2;
+                }
+                // take damage here
+            }
+        });
 
         if (this.state !== prevState) {
             this.animations[prevState].reset();

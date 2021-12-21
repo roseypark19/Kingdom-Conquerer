@@ -5,8 +5,10 @@ class Barbarian {
                               // 0, 1, 0, 1 
         this.state = 0; // idle, walking, shooting, damaged, dead, battle cry, thunder strike
                         // 0, 1, 2, 3, 4, 5, 6
+        this.dexterityConstant = 0.1;
         this.damagedTimer = 0;
         this.deadTimer = 0;
+        this.shootTimer = 0;
 
         this.battleCryTimer = 0;
         this.battleCryCooldown = 0;
@@ -17,7 +19,6 @@ class Barbarian {
 
         this.velocityConstant = 4;
         this.velocity = { x : 0, y : 0 };
-        this.dexterityConstant = 0.1;
         this.animations = [];
         this.updateBB();
         this.loadAnimations();
@@ -75,32 +76,15 @@ class Barbarian {
         this.updateBB();
 
         this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
+        this.shootTimer = Math.max(0, this.shootTimer - this.game.clockTick);
         
         this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
         this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
 
-        this.animations[2].setFrameDuration(this.battleCryCooldown === 0 ? this.dexterityConstant : this.dexterityConstant / 2);
+        this.animations[2].setFrameDuration(this.battleCryCooldown === 0 ? this.dexterityConstant : this.dexterityConstant / 3);
 
         this.thunderStrikeCooldown = Math.max(0, this.thunderStrikeCooldown - this.game.clockTick);
         this.thunderStrikeTimer = Math.max(0, this.thunderStrikeTimer - this.game.clockTick);
-
-        if (this.thunderStrikeTimer <= 0.1 && this.thunderStrikeTimer > 0 && this.thunderStrikeFlag) {
-            this.thunderStrikeFlag = false;
-            this.spawnBeams();
-        }
-
-        if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.damagedTimer === 0) {
-            this.state = this.velocity.x === 0 && this.velocity.y === 0 ? 0 : 1;
-        }
-
-        if (this.game.clicked) {
-            let mousePoint = this.game.mouse ? this.game.mouse : this.game.click;
-            this.facing[0] = mousePoint.y < this.BB.center.y - this.game.camera.y ? 1 : 0;
-            this.facing[1] = mousePoint.x < this.BB.center.x - this.game.camera.x ? 1 : 0; 
-            if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
-                this.state = 2;
-            }
-        }
 
         if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
             this.state = 5;
@@ -116,18 +100,45 @@ class Barbarian {
             this.thunderStrikeCooldown = 1.7;
         }
 
+        if (this.thunderStrikeTimer <= 0.1 && this.thunderStrikeTimer > 0 && this.thunderStrikeFlag) {
+            this.thunderStrikeFlag = false;
+            this.spawnBeams();
+        }
+
+        if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.damagedTimer === 0) {
+            this.state = magnitude(this.velocity) === 0 ? 0 : 1;
+        }
+
+        if (this.game.clicked) {
+            let mousePoint = this.game.mouse ? this.game.mouse : this.game.click;
+            this.facing[0] = mousePoint.y < this.BB.center.y - this.game.camera.y ? 1 : 0;
+            this.facing[1] = mousePoint.x < this.BB.center.x - this.game.camera.x ? 1 : 0; 
+            if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
+                this.state = 2;
+                if (this.shootTimer === 0) {
+                    this.shootTimer = this.animations[2].frameDuration * 6;
+                    this.game.addEntity(new DamageRegion(this.game, 
+                                                         this.facing[1] === 0 ? this.BB.center.x : this.BB.x,
+                                                         this.facing[0] === 0 ? this.BB.center.y : this.BB.y,
+                                                         this.BB.width / 2,
+                                                         this.BB.height / 2,
+                                                         true,
+                                                         50,
+                                                         0.1));
+                }
+            }
+        }
+
         // collision detection and resolve
         let collisionList = [];
-
-        let that = this;
-        this.game.entities.forEach(function(entity) {
-            if (entity.collideable && that.collisionBB.collide(entity.BB)) { 
+        this.game.entities.forEach(entity => {
+            if (entity.collideable && this.collisionBB.collide(entity.BB)) { 
                 collisionList.push(entity);
             }
-            if (entity.friendlyProjectile === false && that.hitBB.collide(entity.hitBB)) {
-                if (that.damagedTimer === 0 && that.battleCryTimer === 0 && that.thunderStrikeTimer === 0 && that.state !== 2) {
-                    that.damagedTimer = 0.6;
-                    that.state = 3;
+            if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB)) {
+                if (this.damagedTimer === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
+                    this.damagedTimer = 0.6;
+                    this.state = 3;
                 }
                 // take damage here
                 entity.removeFromWorld = true;
@@ -152,12 +163,10 @@ class Barbarian {
 
     spawnBeams() {
         let center = this.BB.center;
-        for (let theta = 2 * Math.PI; theta > 0; theta -= Math.PI / 4) {
-            let beamCenter = { x: center.x + 32 * PARAMS.SCALE * Math.sign(Math.round(Math.cos(theta))) / 2, 
-                               y: center.y + 32 * PARAMS.SCALE * Math.sign(Math.round(Math.sin(theta))) / 2 };                 
+        for (let theta = 2 * Math.PI; theta > 0; theta -= Math.PI / 4) {             
             this.game.addEntity(new Beam(this.game, 
-                                         beamCenter.x - 32 * PARAMS.SCALE / 2,
-                                         beamCenter.y - 32 * PARAMS.SCALE / 2,
+                                         center.x - 32 * PARAMS.SCALE / 2,
+                                         center.y - 32 * PARAMS.SCALE / 2,
                                          ASSET_MANAGER.getAsset("./sprites/barbarian/beams.png"), 
                                          theta));
         }
@@ -189,8 +198,8 @@ class Beam {
         Object.assign(this, { game, x, y, spritesheet, theta });
         this.friendlyProjectile = true;
         this.velocityConstant = 10;
-        this.velocity = { x: Math.round(Math.cos(theta)) === 0 ? 0 : this.velocityConstant * Math.sign(Math.cos(theta)),
-                          y: Math.round(Math.sin(theta)) === 0 ? 0 : this.velocityConstant * Math.sign(Math.sin(theta)) };
+        this.velocity = { x: Math.cos(theta) * this.velocityConstant,
+                          y: Math.sin(theta) * this.velocityConstant };
         this.lifetime = 1;
         this.animation = new AnimationGroup(this.spritesheet, 32 * 4 * (this.theta / (Math.PI / 4) - 1), 0, 32, 32, 4, 0.08, false, true);
         this.updateBB();
