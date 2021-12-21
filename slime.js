@@ -6,12 +6,10 @@ class BabySlime {
                               // 0, 1, 0, 1 
         this.state = 0; // idle, attacking, damaged, dead
                         // 0, 1, 2, 3
+        this.hp = 150;
         this.minProximity = 2;
         this.attackDistance = 300;
         this.shootTimer = 0;
-        this.projectile = null;
-        // this.attackTimer = 0;
-        // this.attackCooldown = 0;
         this.damagedTimer = 0;
         this.deadTimer = 0;
         this.velocityConstant = 2;
@@ -37,53 +35,67 @@ class BabySlime {
     update() {
 
         let prevState = this.state;
-        this.shootTimer = Math.max(0, this.shootTimer - this.game.clockTick);
-        this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
-
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
-        let center = this.BB.center;
-        this.game.entities.forEach(entity => {
-            if (entity instanceof Barbarian) {
-                let heroCenter = entity.BB.center;
-                let dist = distance(center, heroCenter);
-                if (dist <= this.attackDistance) {
-                    if (dist > this.minProximity) {
-                        let vector = { x : heroCenter.x - center.x, y : heroCenter.y - center.y };
-                        let directionUnitVector = { x : vector.x / magnitude(vector), y : vector.y / magnitude(vector) };
-                        this.velocity.x = directionUnitVector.x * this.velocityConstant;
-                        this.velocity.y = directionUnitVector.y * this.velocityConstant;
-                        this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
-                        this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
-                    }
-                    if (this.damagedTimer === 0) {
-                        this.state = 1;
-                    }
-                    if (this.shootTimer === 0) {
-                        this.shootTimer = 0.6 - this.game.clockTick;
-                        this.game.addEntity(new DamageRegion(
-                            this.game, this.hitBB.x, this.hitBB.y, this.hitBB.width, this.hitBB.height, false, 20, 0.1));
-                    }
-                } else if (this.damagedTimer === 0) {
-                    this.state = 0;
-                }
-            }
-        });
-        
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
-        this.updateBB();
+
+        this.shootTimer = Math.max(0, this.shootTimer - this.game.clockTick);
+        this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
+        this.deadTimer = Math.max(0, this.deadTimer - this.game.clockTick);
 
         this.game.entities.forEach(entity => {
             if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB)) {
+                entity.removeFromWorld = true;
                 if (this.damagedTimer === 0 && this.deadTimer === 0) {
                     this.damagedTimer = 0.6 - this.game.clockTick;
                     this.state = 2;
                 }
-                // take damage here
+                this.hp -= entity.damage;
+                if (this.deadTimer === 0 && this.hp <= 0) {
+                    this.deadTimer = 9 * 0.15 - this.game.clockTick;
+                    this.state = 3;
+                    this.facing = [0, 0];
+                }
             }
         });
+
+        if (this.state !== 3) {
+            let center = this.BB.center;
+            this.game.entities.forEach(entity => {
+                if (entity instanceof Barbarian) {
+                    let heroCenter = entity.BB.center;
+                    let dist = distance(center, heroCenter);
+                    if (dist <= this.attackDistance) {
+                        if (dist > this.minProximity) {
+                            let vector = { x : heroCenter.x - center.x, y : heroCenter.y - center.y };
+                            let directionUnitVector = { x : vector.x / magnitude(vector), y : vector.y / magnitude(vector) };
+                            this.velocity.x = directionUnitVector.x * this.velocityConstant;
+                            this.velocity.y = directionUnitVector.y * this.velocityConstant;
+                            this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
+                            this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
+                        }
+                        if (this.damagedTimer === 0) {
+                            this.state = 1;
+                        }
+                        if (this.shootTimer === 0) {
+                            this.shootTimer = 0.6 - this.game.clockTick;
+                            this.game.addEntity(new DamageRegion(
+                                this.game, this.hitBB.x, this.hitBB.y, this.hitBB.width, this.hitBB.height, false, 20, 0.1));
+                        }
+                    } else if (this.damagedTimer === 0) {
+                        this.state = 0;
+                    }
+                }
+            });
+        } else {
+            if (this.deadTimer === 0) {
+                this.removeFromWorld = true;
+            }
+        }
+
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.updateBB();
 
         if (this.state !== prevState) {
             this.animations[prevState].reset();

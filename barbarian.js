@@ -123,7 +123,7 @@ class Barbarian {
                                                          this.BB.width / 2,
                                                          this.BB.height / 2,
                                                          true,
-                                                         50,
+                                                         10,
                                                          0.1));
                 }
             }
@@ -197,6 +197,7 @@ class Beam {
     constructor(game, x, y, spritesheet, theta) {
         Object.assign(this, { game, x, y, spritesheet, theta });
         this.friendlyProjectile = true;
+        this.damage = 15;
         this.velocityConstant = 10;
         this.velocity = { x: Math.cos(theta) * this.velocityConstant,
                           y: Math.sin(theta) * this.velocityConstant };
