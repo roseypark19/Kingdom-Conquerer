@@ -61,11 +61,11 @@ class BabySlime {
                         this.state = 1;
                     }
                     if (this.shootTimer === 0) {
-                        this.shootTimer = 0.6 / 2;
+                        this.shootTimer = 0.6 - this.game.clockTick;
                         this.game.addEntity(new DamageRegion(
                             this.game, this.hitBB.x, this.hitBB.y, this.hitBB.width, this.hitBB.height, false, 20, 0.1));
                     }
-                } else {
+                } else if (this.damagedTimer === 0) {
                     this.state = 0;
                 }
             }
@@ -78,7 +78,7 @@ class BabySlime {
         this.game.entities.forEach(entity => {
             if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB)) {
                 if (this.damagedTimer === 0 && this.deadTimer === 0) {
-                    this.damagedTimer = 0.6 - 0.15;
+                    this.damagedTimer = 0.6 - this.game.clockTick;
                     this.state = 2;
                 }
                 // take damage here

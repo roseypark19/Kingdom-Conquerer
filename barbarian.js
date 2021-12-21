@@ -89,15 +89,15 @@ class Barbarian {
         if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
             this.state = 5;
             this.animations[2].setFrameDuration(this.dexterityConstant / 2);
-            this.battleCryTimer = 1.1;
-            this.battleCryCooldown = 5;
+            this.battleCryTimer = 1.1 - this.game.clockTick;
+            this.battleCryCooldown = 5 - this.game.clockTick;
         }
 
         if (this.game.specialF && this.thunderStrikeCooldown === 0 && this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
             this.state = 6;
             this.thunderStrikeFlag = true;
-            this.thunderStrikeTimer = 1.7;
-            this.thunderStrikeCooldown = 1.7;
+            this.thunderStrikeTimer = 1.7 - this.game.clockTick;
+            this.thunderStrikeCooldown = 1.7 - this.game.clockTick;
         }
 
         if (this.thunderStrikeTimer <= 0.1 && this.thunderStrikeTimer > 0 && this.thunderStrikeFlag) {
@@ -116,7 +116,7 @@ class Barbarian {
             if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
                 this.state = 2;
                 if (this.shootTimer === 0) {
-                    this.shootTimer = this.animations[2].frameDuration * 6 / 2;
+                    this.shootTimer = this.animations[2].frameDuration * 6 - this.game.clockTick;
                     this.game.addEntity(new DamageRegion(this.game, 
                                                          this.facing[1] === 0 ? this.BB.center.x : this.BB.x,
                                                          this.facing[0] === 0 ? this.BB.center.y : this.BB.y,
@@ -137,7 +137,7 @@ class Barbarian {
             }
             if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB)) {
                 if (this.damagedTimer === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
-                    this.damagedTimer = 0.6;
+                    this.damagedTimer = 0.6 - this.game.clockTick;
                     this.state = 3;
                 }
                 // take damage here
