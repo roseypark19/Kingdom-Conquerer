@@ -1,8 +1,8 @@
 class BabySlime {
 
-    constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png");
+    constructor(game, x, y, green) {
+        Object.assign(this, { game, x, y, green });
+        this.spritesheet = ASSET_MANAGER.getAsset(green ? "./sprites/slime/slime_green.png" : "./sprites/slime/slime_blue.png");
         this.facing = [0, 0]; // down, up, right, left
                               // 0, 1, 0, 1 
         this.state = 0; // idle, attacking, damaged, dead
@@ -142,9 +142,9 @@ class BabySlime {
 };
 
 class MotherSlime {
-    constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/slime_mother_green/slime_mother_green.png");
+    constructor(game, x, y, green) {
+        Object.assign(this, { game, x, y, green });
+        this.spritesheet = ASSET_MANAGER.getAsset(green ? "./sprites/slime/slime_mother_green.png" : "./sprites/slime/slime_mother_blue.png");
         this.facing = [0, 0]; // down, up, right, left
                               // 0, 1, 0, 1 
         this.state = 0; // idle, attacking, damaged, dead
@@ -243,7 +243,7 @@ class MotherSlime {
                 this.removeFromWorld = true;
                 let x = this.BB.x- 11 * PARAMS.SCALE;
                 for (let i = 0; i < 3; i++) {
-                    this.game.addEntity(new BabySlime(this.game, x, this.BB.y));
+                    this.game.addEntity(new BabySlime(this.game, x, this.BB.y, this.green));
                     x += 11 * PARAMS.SCALE;
                 }
             }

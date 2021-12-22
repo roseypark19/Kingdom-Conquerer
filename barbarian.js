@@ -78,7 +78,9 @@ class Barbarian {
                     }
                 }
             });
+        }
 
+        if (this.state !== 4) {
             if (this.game.right) {
                 newVelX += this.velocityConstant;
                 this.facing[1] = 0;

@@ -8,19 +8,30 @@ class SceneManager {
     };
 
     loadLevel() {
-        this.hero = new Barbarian(this.game, 550, 200);
+        this.hero = new Barbarian(this.game, 700, 150);
         this.game.addEntity(this.hero);
 
-        this.game.addEntity(new MotherSlime(this.game, 550, 550));
-        this.game.addEntity(new BabySlime(this.game, 650, 550));
-        this.game.addEntity(new MotherSlime(this.game, 750, 550));
-        this.game.addEntity(new BabySlime(this.game, 550, 600));
-        this.game.addEntity(new BabySlime(this.game, 750, 600));
-        this.game.addEntity(new BabySlime(this.game, 550, 650));
-        this.game.addEntity(new BabySlime(this.game, 750, 650));
-        this.game.addEntity(new MotherSlime(this.game, 550, 700));
-        this.game.addEntity(new BabySlime(this.game, 650, 700));
-        this.game.addEntity(new MotherSlime(this.game, 750, 700));
+        this.game.addEntity(new MotherSlime(this.game, 550, 550, true));
+        this.game.addEntity(new BabySlime(this.game, 650, 550, true));
+        this.game.addEntity(new MotherSlime(this.game, 750, 550, true));
+        this.game.addEntity(new BabySlime(this.game, 550, 600, true));
+        this.game.addEntity(new BabySlime(this.game, 750, 600, true));
+        this.game.addEntity(new BabySlime(this.game, 550, 650, true));
+        this.game.addEntity(new BabySlime(this.game, 750, 650, true));
+        this.game.addEntity(new MotherSlime(this.game, 550, 700, true));
+        this.game.addEntity(new BabySlime(this.game, 650, 700, true));
+        this.game.addEntity(new MotherSlime(this.game, 750, 700, true));
+
+        this.game.addEntity(new MotherSlime(this.game, 150, 150, false));
+        this.game.addEntity(new BabySlime(this.game, 250, 150, false));
+        this.game.addEntity(new MotherSlime(this.game, 350, 150, false));
+        this.game.addEntity(new BabySlime(this.game, 150, 200, false));
+        this.game.addEntity(new BabySlime(this.game, 350, 200, false));
+        this.game.addEntity(new BabySlime(this.game, 150, 250, false));
+        this.game.addEntity(new BabySlime(this.game, 350, 250, false));
+        this.game.addEntity(new MotherSlime(this.game, 150, 300, false));
+        this.game.addEntity(new BabySlime(this.game, 250, 300, false));
+        this.game.addEntity(new MotherSlime(this.game, 350, 300, false));
     };
 
     update() {
