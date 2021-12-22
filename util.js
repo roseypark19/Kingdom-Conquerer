@@ -7,7 +7,10 @@ const PARAMS = {
     CANVAS_HEIGHT : 900,
     SCALE : 4,
     GAMEOVER: false,
-    SHOT_ID: 0
+    SHOT_ID: 0,
+    LOW_HP_COLOR: "Red",
+    MED_HP_COLOR: "Orange",
+    HIGH_HP_COLOR: "Green"
 };
 
 

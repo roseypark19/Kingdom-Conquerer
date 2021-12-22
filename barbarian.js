@@ -6,7 +6,8 @@ class Barbarian {
                               // 0, 1, 0, 1 
         this.state = 0; // idle, walking, shooting, damaged, dead, battle cry, thunder strike
                         // 0, 1, 2, 3, 4, 5, 6
-        this.hp = 1000;
+        this.maxHp = 1000;
+        this.hp = this.maxHp;
         this.dexterityConstant = 0.1;
         this.damagedTimer = 0;
         this.deadTimer = 0;
@@ -210,6 +211,22 @@ class Barbarian {
     draw(ctx) {
         this.animations[this.state].drawFrame(
             this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE, this.facing[0], this.facing[1]);
+
+        if (this.hp > 0) {
+            ctx.lineWidth = 1;
+            let percentage = this.hp / this.maxHp;
+            if (percentage * 100 <= 25) {
+                ctx.fillStyle = PARAMS.LOW_HP_COLOR;
+            } else if (percentage * 100 >= 75) {
+                ctx.fillStyle = PARAMS.HIGH_HP_COLOR;
+            } else {
+                ctx.fillStyle = PARAMS.MED_HP_COLOR;
+            }
+            ctx.fillRect(this.BB.center.x - 4 * PARAMS.SCALE - this.game.camera.x, 
+                           this.hitBB.bottom - this.game.camera.y, 8 * PARAMS.SCALE * percentage, 1 * PARAMS.SCALE);
+            ctx.strokeRect(this.BB.center.x - 4 * PARAMS.SCALE - this.game.camera.x, 
+                           this.hitBB.bottom - this.game.camera.y, 8 * PARAMS.SCALE, 1 * PARAMS.SCALE);
+        }
 
         if (PARAMS.DEBUG) {
             ctx.lineWidth = PARAMS.DEBUG_WIDTH;
