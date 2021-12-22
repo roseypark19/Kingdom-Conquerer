@@ -5,7 +5,9 @@ const PARAMS = {
     DEBUG_COLOR: "Red",
     CANVAS_WIDTH : 900,
     CANVAS_HEIGHT : 900,
-    SCALE : 4
+    SCALE : 4,
+    GAMEOVER: false,
+    SHOT_ID: 0
 };
 
 

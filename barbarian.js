@@ -5,6 +5,7 @@ class Barbarian {
                               // 0, 1, 0, 1 
         this.state = 0; // idle, walking, shooting, damaged, dead, battle cry, thunder strike
                         // 0, 1, 2, 3, 4, 5, 6
+        this.hp = 500;
         this.dexterityConstant = 0.1;
         this.damagedTimer = 0;
         this.deadTimer = 0;
@@ -40,44 +41,10 @@ class Barbarian {
 
         this.originalCollisionBB = this.collisionBB;
 
-        this.facing[0] = 0;
-
-        let newVelX = 0;
-        let newVelY = 0;
-        
-        if (this.game.right) {
-            newVelX += this.velocityConstant;
-            this.facing[1] = 0;
-        }
-        if (this.game.left) {
-            newVelX -= this.velocityConstant;
-            this.facing[1] = 1;
-        }
-        if (this.game.up) {
-            newVelY -= this.velocityConstant;
-            this.facing[0] = 1;
-        }
-        if (this.game.down) {
-            newVelY += this.velocityConstant;
-            this.facing[0] = 0;
-        }
-
-        if (newVelX !== 0 && newVelY !== 0) var diagonalVel = Math.sqrt(Math.pow(this.velocityConstant, 2) / 2);
-
-        if (diagonalVel) {
-            newVelX = newVelX > 0 ? diagonalVel : -diagonalVel;
-            newVelY = newVelY > 0 ? diagonalVel : -diagonalVel;
-        } 
-
-        this.velocity.x = newVelX;
-        this.velocity.y = newVelY;
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
-        this.updateBB();
-
+        this.deadTimer = Math.max(0, this.deadTimer - this.game.clockTick);
         this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
         this.shootTimer = Math.max(0, this.shootTimer - this.game.clockTick);
-        
+    
         this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
         this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
 
@@ -86,46 +53,109 @@ class Barbarian {
         this.thunderStrikeCooldown = Math.max(0, this.thunderStrikeCooldown - this.game.clockTick);
         this.thunderStrikeTimer = Math.max(0, this.thunderStrikeTimer - this.game.clockTick);
 
-        if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
-            this.state = 5;
-            this.animations[2].setFrameDuration(this.dexterityConstant / 2);
-            this.battleCryTimer = 1.1 - this.game.clockTick;
-            this.battleCryCooldown = 5 - this.game.clockTick;
-        }
+        this.facing[0] = 0;
 
-        if (this.game.specialF && this.thunderStrikeCooldown === 0 && this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
-            this.state = 6;
-            this.thunderStrikeFlag = true;
-            this.thunderStrikeTimer = 1.7 - this.game.clockTick;
-            this.thunderStrikeCooldown = 1.7 - this.game.clockTick;
-        }
+        let newVelX = 0;
+        let newVelY = 0;
 
-        if (this.thunderStrikeTimer <= 0.1 && this.thunderStrikeTimer > 0 && this.thunderStrikeFlag) {
-            this.thunderStrikeFlag = false;
-            this.spawnBeams();
-        }
-
-        if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.damagedTimer === 0) {
-            this.state = magnitude(this.velocity) === 0 ? 0 : 1;
-        }
-
-        if (this.game.clicked) {
-            let mousePoint = this.game.mouse ? this.game.mouse : this.game.click;
-            this.facing[0] = mousePoint.y < this.BB.center.y - this.game.camera.y ? 1 : 0;
-            this.facing[1] = mousePoint.x < this.BB.center.x - this.game.camera.x ? 1 : 0; 
-            if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
-                this.state = 2;
-                if (this.shootTimer === 0) {
-                    this.shootTimer = this.animations[2].frameDuration * 6 - this.game.clockTick;
-                    this.game.addEntity(new DamageRegion(this.game, 
-                                                         this.facing[1] === 0 ? this.BB.center.x : this.BB.x,
-                                                         this.facing[0] === 0 ? this.BB.center.y : this.BB.y,
-                                                         this.BB.width / 2,
-                                                         this.BB.height / 2,
-                                                         true,
-                                                         10,
-                                                         0.1));
+        if (this.state !== 4) {
+            this.game.entities.forEach(entity => {
+                if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB)) {
+                    if (this.damagedTimer === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
+                        this.damagedTimer = 0.6 - this.game.clockTick;
+                        this.state = 3;
+                    }
+                    // take damage here
+                    entity.removeFromWorld = true;
+                    this.hp -= entity.damage;
+                    if (this.deadTimer === 0 && this.hp <= 0) {
+                        this.deadTimer = 17 * 0.1 - this.game.clockTick;
+                        this.state = 4;
+                        this.facing = [0, 0];
+                        PARAMS.GAMEOVER = true;
+                    }
                 }
+            });
+
+            if (this.game.right) {
+                newVelX += this.velocityConstant;
+                this.facing[1] = 0;
+            }
+            if (this.game.left) {
+                newVelX -= this.velocityConstant;
+                this.facing[1] = 1;
+            }
+            if (this.game.up) {
+                newVelY -= this.velocityConstant;
+                this.facing[0] = 1;
+            }
+            if (this.game.down) {
+                newVelY += this.velocityConstant;
+                this.facing[0] = 0;
+            }
+    
+            if (newVelX !== 0 && newVelY !== 0) {
+                var diagonalVel = Math.sqrt(Math.pow(this.velocityConstant, 2) / 2);
+            }
+            if (diagonalVel) {
+                newVelX = newVelX > 0 ? diagonalVel : -diagonalVel;
+                newVelY = newVelY > 0 ? diagonalVel : -diagonalVel;
+            } 
+        }
+
+        this.velocity.x = newVelX;
+        this.velocity.y = newVelY;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.updateBB();
+
+        if (this.state !== 4) {
+
+            if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
+                this.state = 5;
+                this.animations[2].setFrameDuration(this.dexterityConstant / 2);
+                this.battleCryTimer = 1.1 - this.game.clockTick;
+                this.battleCryCooldown = 5 - this.game.clockTick;
+            }
+
+            if (this.game.specialF && this.thunderStrikeCooldown === 0 && this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
+                this.state = 6;
+                this.thunderStrikeFlag = true;
+                this.thunderStrikeTimer = 1.7 - this.game.clockTick;
+                this.thunderStrikeCooldown = 1.7 - this.game.clockTick;
+            }
+
+            if (this.thunderStrikeTimer <= 0.1 && this.thunderStrikeTimer > 0 && this.thunderStrikeFlag) {
+                this.thunderStrikeFlag = false;
+                this.spawnBeams();
+            }
+
+            if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.damagedTimer === 0) {
+                this.state = magnitude(this.velocity) === 0 ? 0 : 1;
+            }
+
+            if (this.game.clicked) {
+                let mousePoint = this.game.mouse ? this.game.mouse : this.game.click;
+                this.facing[0] = mousePoint.y < this.BB.center.y - this.game.camera.y ? 1 : 0;
+                this.facing[1] = mousePoint.x < this.BB.center.x - this.game.camera.x ? 1 : 0; 
+                if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
+                    this.state = 2;
+                    if (this.shootTimer === 0) {
+                        this.shootTimer = this.animations[2].frameDuration * 6 - this.game.clockTick;
+                        this.game.addEntity(new DamageRegion(this.game, 
+                                                            this.facing[1] === 0 ? this.BB.center.x : this.BB.x,
+                                                            this.facing[0] === 0 ? this.BB.center.y : this.BB.y,
+                                                            this.BB.width / 2,
+                                                            this.BB.height / 2,
+                                                            true,
+                                                            10,
+                                                            0.1));
+                    }
+                }
+            }
+        } else {
+            if (this.deadTimer === 0) {
+                this.removeFromWorld = true;
             }
         }
 
@@ -134,14 +164,6 @@ class Barbarian {
         this.game.entities.forEach(entity => {
             if (entity.collideable && this.collisionBB.collide(entity.BB)) { 
                 collisionList.push(entity);
-            }
-            if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB)) {
-                if (this.damagedTimer === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
-                    this.damagedTimer = 0.6 - this.game.clockTick;
-                    this.state = 3;
-                }
-                // take damage here
-                entity.removeFromWorld = true;
             }
         });
 
@@ -198,6 +220,7 @@ class Beam {
         Object.assign(this, { game, x, y, spritesheet, theta });
         this.friendlyProjectile = true;
         this.damage = 15;
+        this.id = ++PARAMS.SHOT_ID;
         this.velocityConstant = 10;
         this.velocity = { x: Math.cos(theta) * this.velocityConstant,
                           y: Math.sin(theta) * this.velocityConstant };

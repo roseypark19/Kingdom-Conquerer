@@ -11,7 +11,16 @@ class SceneManager {
         this.hero = new Barbarian(this.game, 200, 200, ASSET_MANAGER.getAsset("./sprites/barbarian/barbarian.png"));
         this.game.addEntity(this.hero);
 
-        this.game.addEntity(new BabySlime(this.game, 700, 700, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 550, 550, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 600, 550, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 650, 550, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 550, 600, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 650, 600, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 550, 650, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 650, 650, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 550, 700, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 600, 700, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
+        this.game.addEntity(new BabySlime(this.game, 650, 700, ASSET_MANAGER.getAsset("./sprites/slime_green/slime_green.png")));
     };
 
     update() {

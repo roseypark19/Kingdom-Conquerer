@@ -9,10 +9,11 @@ class BabySlime {
         this.hp = 150;
         this.minProximity = 2;
         this.attackDistance = 300;
+        this.shotsTaken = [];
         this.shootTimer = 0;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = 2;
+        this.velocityConstant = randomInt(4) + 1;
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
         this.updateBB();
@@ -44,8 +45,8 @@ class BabySlime {
         this.deadTimer = Math.max(0, this.deadTimer - this.game.clockTick);
 
         this.game.entities.forEach(entity => {
-            if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB)) {
-                entity.removeFromWorld = true;
+            if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
+                this.shotsTaken.push(entity.id);
                 if (this.damagedTimer === 0 && this.deadTimer === 0) {
                     this.damagedTimer = 0.6 - this.game.clockTick;
                     this.state = 2;
@@ -80,7 +81,7 @@ class BabySlime {
                         if (this.shootTimer === 0) {
                             this.shootTimer = 0.6 - this.game.clockTick;
                             this.game.addEntity(new DamageRegion(
-                                this.game, this.hitBB.x, this.hitBB.y, this.hitBB.width, this.hitBB.height, false, 20, 0.1));
+                                this.game, this.hitBB.x, this.hitBB.y, this.hitBB.width, this.hitBB.height, false, 10, 0.1));
                         }
                     } else if (this.damagedTimer === 0) {
                         this.state = 0;

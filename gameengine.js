@@ -157,9 +157,12 @@ class GameEngine {
 
     update() {
         let entitiesCount = this.entities.length;
-        
         for (let i = 0; i < entitiesCount; i++) {
-            var entity = this.entities[i];
+            let entity = this.entities[i];
+            
+            if (PARAMS.GAMEOVER && !(entity instanceof Barbarian)) {
+                entity.removeFromWorld = true;
+            }
 
             if (!entity.removeFromWorld) {
                 entity.update();
