@@ -117,6 +117,7 @@ class BabySlime {
 
         if (this.hp > 0) {
             ctx.lineWidth = 1;
+            ctx.strokeStyle = "Black";
             let percentage = this.hp / this.maxHp;
             if (percentage * 100 <= 25) {
                 ctx.fillStyle = PARAMS.LOW_HP_COLOR;
@@ -264,6 +265,7 @@ class MotherSlime {
 
         if (this.hp > 0) {
             ctx.lineWidth = 1;
+            ctx.strokeStyle = "Black";
             let percentage = this.hp / this.maxHp;
             if (percentage * 100 <= 25) {
                 ctx.fillStyle = PARAMS.LOW_HP_COLOR;
