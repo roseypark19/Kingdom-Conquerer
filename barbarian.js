@@ -1,6 +1,7 @@
 class Barbarian {
-    constructor(game, x, y, spritesheet) {
-        Object.assign(this, { game, x, y, spritesheet });
+    constructor(game, x, y) {
+        Object.assign(this, { game, x, y });
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/barbarian/barbarian.png");
         this.facing = [0, 0]; // down, up, right, left
                               // 0, 1, 0, 1 
         this.state = 0; // idle, walking, shooting, damaged, dead, battle cry, thunder strike
@@ -148,7 +149,7 @@ class Barbarian {
                                                             this.BB.width / 2,
                                                             this.BB.height / 2,
                                                             true,
-                                                            10,
+                                                            15,
                                                             0.1));
                     }
                 }
@@ -197,7 +198,7 @@ class Barbarian {
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
         this.hitBB = new BoundingBox(this.x + 12 * PARAMS.SCALE, this.y + 12 * PARAMS.SCALE, 8 * PARAMS.SCALE, 8 * PARAMS.SCALE);
-        this.collisionBB = new BoundingBox(this.hitBB.x + 2 * PARAMS.SCALE, this.hitBB.y + 4 * PARAMS.SCALE, 4 * PARAMS.SCALE, 4 * PARAMS.SCALE);
+        this.collisionBB = new BoundingBox(this.hitBB.x, this.hitBB.y + 4 * PARAMS.SCALE, 8 * PARAMS.SCALE, 4 * PARAMS.SCALE);
     };
     
     draw(ctx) {
@@ -219,7 +220,7 @@ class Beam {
     constructor(game, x, y, spritesheet, theta) {
         Object.assign(this, { game, x, y, spritesheet, theta });
         this.friendlyProjectile = true;
-        this.damage = 15;
+        this.damage = 25;
         this.id = ++PARAMS.SHOT_ID;
         this.velocityConstant = 10;
         this.velocity = { x: Math.cos(theta) * this.velocityConstant,
