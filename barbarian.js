@@ -6,7 +6,7 @@ class Barbarian {
                               // 0, 1, 0, 1 
         this.state = 0; // idle, walking, shooting, damaged, dead, battle cry, thunder strike
                         // 0, 1, 2, 3, 4, 5, 6
-        this.hp = 500;
+        this.hp = 1000;
         this.dexterityConstant = 0.1;
         this.damagedTimer = 0;
         this.deadTimer = 0;

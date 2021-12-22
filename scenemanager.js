@@ -8,19 +8,19 @@ class SceneManager {
     };
 
     loadLevel() {
-        this.hero = new Barbarian(this.game, 200, 200);
+        this.hero = new Barbarian(this.game, 550, 200);
         this.game.addEntity(this.hero);
 
         this.game.addEntity(new MotherSlime(this.game, 550, 550));
-        this.game.addEntity(new BabySlime(this.game, 600, 550));
-        this.game.addEntity(new MotherSlime(this.game, 650, 550));
+        this.game.addEntity(new BabySlime(this.game, 650, 550));
+        this.game.addEntity(new MotherSlime(this.game, 750, 550));
         this.game.addEntity(new BabySlime(this.game, 550, 600));
-        this.game.addEntity(new BabySlime(this.game, 650, 600));
+        this.game.addEntity(new BabySlime(this.game, 750, 600));
         this.game.addEntity(new BabySlime(this.game, 550, 650));
-        this.game.addEntity(new BabySlime(this.game, 650, 650));
+        this.game.addEntity(new BabySlime(this.game, 750, 650));
         this.game.addEntity(new MotherSlime(this.game, 550, 700));
-        this.game.addEntity(new BabySlime(this.game, 600, 700));
-        this.game.addEntity(new MotherSlime(this.game, 650, 700));
+        this.game.addEntity(new BabySlime(this.game, 650, 700));
+        this.game.addEntity(new MotherSlime(this.game, 750, 700));
     };
 
     update() {
