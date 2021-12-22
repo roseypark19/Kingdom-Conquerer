@@ -89,7 +89,7 @@ class BabySlime {
                                                                  projectileCenter.y - 4 * PARAMS.SCALE, 
                                                                  8 * PARAMS.SCALE, 
                                                                  8 * PARAMS.SCALE, 
-                                                                 false, 30, 0.1));
+                                                                 false, 15, 0.1));
                         }
                     } else if (this.damagedTimer === 0) {
                         this.state = 0;
