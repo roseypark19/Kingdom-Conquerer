@@ -40,6 +40,7 @@ class Barbarian {
     update() {
 
         let prevState = this.state;
+        this.hp = Math.min(this.maxHp, this.hp + this.game.clockTick / 1 * 20);
 
         this.originalCollisionBB = this.collisionBB;
 
