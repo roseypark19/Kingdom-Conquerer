@@ -143,14 +143,20 @@ class Barbarian {
                     this.state = 2;
                     if (this.shootTimer === 0) {
                         this.shootTimer = this.animations[2].frameDuration * 6 - this.game.clockTick;
+                        let vector = { x : mousePoint.x + this.game.camera.x - this.BB.center.x, 
+                                       y : mousePoint.y + this.game.camera.y - this.BB.center.y };
+                        console.log(vector);
+                        let directionUnitVector = unitVector(vector);
+                        let projectileCenter = { x: this.BB.center.x + 8 * PARAMS.SCALE * directionUnitVector.x,
+                                                 y: this.BB.center.y + 8 * PARAMS.SCALE * directionUnitVector.y };
                         this.game.addEntity(new DamageRegion(this.game, 
-                                                            this.facing[1] === 0 ? this.BB.center.x : this.BB.x,
-                                                            this.facing[0] === 0 ? this.BB.center.y : this.BB.y,
-                                                            this.BB.width / 2,
-                                                            this.BB.height / 2,
-                                                            true,
-                                                            15,
-                                                            0.1));
+                                                             projectileCenter.x - 8 * PARAMS.SCALE,
+                                                             projectileCenter.y - 8 * PARAMS.SCALE,
+                                                             this.BB.width / 2,
+                                                             this.BB.height / 2,
+                                                             true,
+                                                             15,
+                                                             0.1));
                     }
                 }
             }
