@@ -12,6 +12,7 @@ class Barbarian {
         this.damagedTimer = 0;
         this.deadTimer = 0;
         this.shootTimer = 0;
+        this.shootFlag = false;
 
         this.battleCryTimer = 0;
         this.battleCryCooldown = 0;
@@ -156,14 +157,17 @@ class Barbarian {
                         let directionUnitVector = unitVector(vector);
                         let projectileCenter = { x: this.BB.center.x + 8 * PARAMS.SCALE * directionUnitVector.x,
                                                  y: this.BB.center.y + 8 * PARAMS.SCALE * directionUnitVector.y };
-                        this.game.addEntity(new DamageRegion(this.game, 
-                                                             projectileCenter.x - 8 * PARAMS.SCALE,
-                                                             projectileCenter.y - 8 * PARAMS.SCALE,
-                                                             this.BB.width / 2,
-                                                             this.BB.height / 2,
-                                                             true,
-                                                             15,
-                                                             0.1));
+                        if (this.shootFlag) {
+                            this.game.addEntity(new DamageRegion(this.game, 
+                                                                 projectileCenter.x - 8 * PARAMS.SCALE,
+                                                                 projectileCenter.y - 8 * PARAMS.SCALE,
+                                                                 this.BB.width / 2,
+                                                                 this.BB.height / 2,
+                                                                 true,
+                                                                 15,
+                                                                 0.1));
+                        }
+                        
                     }
                 }
             }
@@ -172,6 +176,8 @@ class Barbarian {
                 this.removeFromWorld = true;
             }
         }
+
+        this.shootFlag = this.state === 2;
 
         // collision detection and resolve
         let collisionList = [];

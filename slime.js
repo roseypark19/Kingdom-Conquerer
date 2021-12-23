@@ -13,6 +13,7 @@ class BabySlime {
         this.attackDistance = 300;
         this.shotsTaken = [];
         this.shootTimer = 0;
+        this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
         this.velocityConstant = 2;
@@ -38,6 +39,7 @@ class BabySlime {
     update() {
 
         let prevState = this.state;
+        let isShooting = prevState === 1;
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -80,16 +82,18 @@ class BabySlime {
                         if (this.damagedTimer === 0) {
                             this.state = 1;
                         }
-                        if (this.shootTimer === 0) {
+                        if (this.shootTimer === 0 && isShooting) {
                             this.shootTimer = 0.6 - this.game.clockTick;
                             let projectileCenter = { x: this.BB.center.x + 4 * PARAMS.SCALE * directionUnitVector.x,
                                                      y: this.BB.center.y + 4 * PARAMS.SCALE * directionUnitVector.y };
-                            this.game.addEntity(new DamageRegion(this.game, 
-                                                                 projectileCenter.x - 4 * PARAMS.SCALE, 
-                                                                 projectileCenter.y - 4 * PARAMS.SCALE, 
-                                                                 8 * PARAMS.SCALE, 
-                                                                 8 * PARAMS.SCALE, 
-                                                                 false, 15, 0.1));
+                            if (this.shootFlag) {
+                                this.game.addEntity(new DamageRegion(this.game, 
+                                                                     projectileCenter.x - 4 * PARAMS.SCALE, 
+                                                                     projectileCenter.y - 4 * PARAMS.SCALE, 
+                                                                     8 * PARAMS.SCALE, 
+                                                                     8 * PARAMS.SCALE, 
+                                                                     false, 25, 0.1));
+                            }
                         }
                     } else if (this.damagedTimer === 0) {
                         this.state = 0;
@@ -101,6 +105,8 @@ class BabySlime {
                 this.removeFromWorld = true;
             }
         }
+
+        this.shootFlag = this.state === 1;
 
         this.x += this.velocity.x;
         this.y += this.velocity.y;
@@ -156,6 +162,7 @@ class MotherSlime {
         this.attackDistance = 300;
         this.shotsTaken = [];
         this.shootTimer = 0;
+        this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
         this.velocityConstant = 1;
@@ -181,6 +188,7 @@ class MotherSlime {
     update() {
 
         let prevState = this.state;
+        let isShooting = prevState === 1;
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -223,16 +231,18 @@ class MotherSlime {
                         if (this.damagedTimer === 0) {
                             this.state = 1;
                         }
-                        if (this.shootTimer === 0) {
+                        if (this.shootTimer === 0 && isShooting) {
                             this.shootTimer = 0.6 - this.game.clockTick;
                             let projectileCenter = { x: this.BB.center.x + 6 * PARAMS.SCALE * directionUnitVector.x,
                                                      y: this.BB.center.y + 6 * PARAMS.SCALE * directionUnitVector.y };
-                            this.game.addEntity(new DamageRegion(this.game, 
-                                                                 projectileCenter.x - 6 * PARAMS.SCALE, 
-                                                                 projectileCenter.y - 6 * PARAMS.SCALE, 
-                                                                 12 * PARAMS.SCALE, 
-                                                                 12 * PARAMS.SCALE, 
-                                                                 false, 30, 0.1));
+                            if (this.shootFlag) {
+                                this.game.addEntity(new DamageRegion(this.game, 
+                                                                     projectileCenter.x - 6 * PARAMS.SCALE, 
+                                                                     projectileCenter.y - 6 * PARAMS.SCALE, 
+                                                                     12 * PARAMS.SCALE, 
+                                                                     12 * PARAMS.SCALE, 
+                                                                     false, 100, 0.1));
+                            }  
                         }
                     } else if (this.damagedTimer === 0) {
                         this.state = 0;
@@ -249,6 +259,8 @@ class MotherSlime {
                 }
             }
         }
+
+        this.shootFlag = this.state === 1;
 
         this.x += this.velocity.x;
         this.y += this.velocity.y;

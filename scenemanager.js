@@ -32,6 +32,8 @@ class SceneManager {
         this.game.addEntity(new MotherSlime(this.game, 150, 300, false));
         this.game.addEntity(new BabySlime(this.game, 250, 300, false));
         this.game.addEntity(new MotherSlime(this.game, 350, 300, false));
+
+        this.game.addEntity(new Minotaur(this.game, 300, 50));
     };
 
     update() {
