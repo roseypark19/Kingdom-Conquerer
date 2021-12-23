@@ -7,11 +7,10 @@ class Minotaur {
                               // 0, 1, 0, 1 
         this.state = 0; // idle, walking, attacking, damaged, dead
                         // 0, 1, 2, 3, 4
-        this.maxHp = 300;
+        this.maxHp = 500;
         this.hp = this.maxHp;
         this.minProximity = 5;
         this.visionDistance = 400;
-        this.attackDistance = 100;
         this.shotsTaken = [];
         this.shootTimer = 0;
         this.attackTimer = 0;
@@ -57,21 +56,23 @@ class Minotaur {
         this.chargeTimer = Math.max(0, this.chargeTimer - this.game.clockTick);
         this.attackTimer = Math.max(0, this.attackTimer - this.game.clockTick);
 
-        this.game.entities.forEach(entity => {
-            if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
-                this.shotsTaken.push(entity.id);
-                if (this.damagedTimer === 0 && this.deadTimer === 0) {
-                    this.damagedTimer = 0.6 - this.game.clockTick;
-                    this.state = 3;
+        if (this.state !== 4) {
+            this.game.entities.forEach(entity => {
+                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
+                    this.shotsTaken.push(entity.id);
+                    if (this.damagedTimer === 0 && this.deadTimer === 0) {
+                        this.damagedTimer = 0.6 - this.game.clockTick;
+                        this.state = 3;
+                    }
+                    this.hp -= entity.damage;
+                    if (this.deadTimer === 0 && this.hp <= 0) {
+                        this.deadTimer = 15 * 0.15 - this.game.clockTick;
+                        this.state = 4;
+                        this.facing = [0, 0];
+                    }
                 }
-                this.hp -= entity.damage;
-                if (this.deadTimer === 0 && this.hp <= 0) {
-                    this.deadTimer = 15 * 0.15 - this.game.clockTick;
-                    this.state = 4;
-                    this.facing = [0, 0];
-                }
-            }
-        });
+            });
+        }
 
         if (this.state !== 4) {
             let center = this.BB.center;

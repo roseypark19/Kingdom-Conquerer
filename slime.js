@@ -47,21 +47,23 @@ class BabySlime {
         this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
         this.deadTimer = Math.max(0, this.deadTimer - this.game.clockTick);
 
-        this.game.entities.forEach(entity => {
-            if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
-                this.shotsTaken.push(entity.id);
-                if (this.damagedTimer === 0 && this.deadTimer === 0) {
-                    this.damagedTimer = 0.6 - this.game.clockTick;
-                    this.state = 2;
+        if (this.state !== 3) {
+            this.game.entities.forEach(entity => {
+                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
+                    this.shotsTaken.push(entity.id);
+                    if (this.damagedTimer === 0 && this.deadTimer === 0) {
+                        this.damagedTimer = 0.6 - this.game.clockTick;
+                        this.state = 2;
+                    }
+                    this.hp -= entity.damage;
+                    if (this.deadTimer === 0 && this.hp <= 0) {
+                        this.deadTimer = 9 * 0.15 - this.game.clockTick;
+                        this.state = 3;
+                        this.facing = [0, 0];
+                    }
                 }
-                this.hp -= entity.damage;
-                if (this.deadTimer === 0 && this.hp <= 0) {
-                    this.deadTimer = 9 * 0.15 - this.game.clockTick;
-                    this.state = 3;
-                    this.facing = [0, 0];
-                }
-            }
-        });
+            });
+        }
 
         if (this.state !== 3) {
             let center = this.BB.center;
@@ -197,21 +199,23 @@ class MotherSlime {
         this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
         this.deadTimer = Math.max(0, this.deadTimer - this.game.clockTick);
 
-        this.game.entities.forEach(entity => {
-            if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
-                this.shotsTaken.push(entity.id);
-                if (this.damagedTimer === 0 && this.deadTimer === 0) {
-                    this.damagedTimer = 0.6 - this.game.clockTick;
-                    this.state = 2;
+        if (this.state !== 3) {
+            this.game.entities.forEach(entity => {
+                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
+                    this.shotsTaken.push(entity.id);
+                    if (this.damagedTimer === 0 && this.deadTimer === 0) {
+                        this.damagedTimer = 0.6 - this.game.clockTick;
+                        this.state = 2;
+                    }
+                    this.hp -= entity.damage;
+                    if (this.deadTimer === 0 && this.hp <= 0) {
+                        this.deadTimer = 11 * 0.15 - this.game.clockTick;
+                        this.state = 3;
+                        this.facing = [0, 0];
+                    }
                 }
-                this.hp -= entity.damage;
-                if (this.deadTimer === 0 && this.hp <= 0) {
-                    this.deadTimer = 11 * 0.15 - this.game.clockTick;
-                    this.state = 3;
-                    this.facing = [0, 0];
-                }
-            }
-        });
+            });
+        }
 
         if (this.state !== 3) {
             let center = this.BB.center;
