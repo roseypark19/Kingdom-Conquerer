@@ -132,12 +132,16 @@ class Minotaur {
             } else {
                 if (this.chargeTimer === 0) {
                     this.chargeAccumulator += 0.5;
-                    this.velocity.x += this.chargeUnitVector.x * this.velocityConstant * 3;
-                    this.velocity.y += this.chargeUnitVector.y * this.velocityConstant * 3;
+                    if (this.state !== 3) {
+                        this.velocity.x += this.chargeUnitVector.x * this.velocityConstant * 3;
+                        this.velocity.y += this.chargeUnitVector.y * this.velocityConstant * 3;
+                    } 
                     this.animations[1].setFrameDuration(this.walkSpeed / 3);
                 } else {
-                    this.velocity.x = this.chargeUnitVector.x * this.velocityConstant;
-                    this.velocity.y = this.chargeUnitVector.y * this.velocityConstant;
+                    if (this.state !== 3) {
+                        this.velocity.x = this.chargeUnitVector.x * this.velocityConstant;
+                        this.velocity.y = this.chargeUnitVector.y * this.velocityConstant;
+                    }
                     this.animations[1].setFrameDuration(this.walkSpeed);
                 }
                 if (this.damagedTimer === 0) {

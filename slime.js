@@ -39,7 +39,6 @@ class BabySlime {
     update() {
 
         let prevState = this.state;
-        let isShooting = prevState === 1;
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -74,15 +73,17 @@ class BabySlime {
                         let vector = { x : heroCenter.x - center.x, y : heroCenter.y - center.y };
                         let directionUnitVector = unitVector(vector);
                         if (dist > this.minProximity) {  
-                            this.velocity.x = directionUnitVector.x * this.velocityConstant;
-                            this.velocity.y = directionUnitVector.y * this.velocityConstant;
+                            if (this.state !== 2) {
+                                this.velocity.x = directionUnitVector.x * this.velocityConstant;
+                                this.velocity.y = directionUnitVector.y * this.velocityConstant;
+                            } 
                             this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
                             this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
                         }
                         if (this.damagedTimer === 0) {
                             this.state = 1;
                         }
-                        if (this.shootTimer === 0 && isShooting) {
+                        if (this.shootTimer === 0 && this.state === 1) {
                             this.shootTimer = 0.6 - this.game.clockTick;
                             let projectileCenter = { x: this.BB.center.x + 4 * PARAMS.SCALE * directionUnitVector.x,
                                                      y: this.BB.center.y + 4 * PARAMS.SCALE * directionUnitVector.y };
@@ -188,7 +189,6 @@ class MotherSlime {
     update() {
 
         let prevState = this.state;
-        let isShooting = prevState === 1;
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -222,16 +222,18 @@ class MotherSlime {
                     if (dist <= this.attackDistance) {
                         let vector = { x : heroCenter.x - center.x, y : heroCenter.y - center.y };
                         let directionUnitVector = unitVector(vector);
-                        if (dist > this.minProximity) {  
-                            this.velocity.x = directionUnitVector.x * this.velocityConstant;
-                            this.velocity.y = directionUnitVector.y * this.velocityConstant;
+                        if (dist > this.minProximity) {
+                            if (this.state !== 2) {
+                                this.velocity.x = directionUnitVector.x * this.velocityConstant;
+                                this.velocity.y = directionUnitVector.y * this.velocityConstant;
+                            }  
                             this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
                             this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
                         }
                         if (this.damagedTimer === 0) {
                             this.state = 1;
                         }
-                        if (this.shootTimer === 0 && isShooting) {
+                        if (this.shootTimer === 0 && this.state === 1) {
                             this.shootTimer = 0.6 - this.game.clockTick;
                             let projectileCenter = { x: this.BB.center.x + 6 * PARAMS.SCALE * directionUnitVector.x,
                                                      y: this.BB.center.y + 6 * PARAMS.SCALE * directionUnitVector.y };
