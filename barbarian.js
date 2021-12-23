@@ -74,7 +74,9 @@ class Barbarian {
                     }
                     // take damage here
                     entity.removeFromWorld = true;
-                    this.hp -= entity.damage;
+                    if (this.thunderStrikeTimer <= 0) {
+                        this.hp -= entity.damage;
+                    }
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 17 * 0.1 - this.game.clockTick;
                         this.state = 4;
