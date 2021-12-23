@@ -27,7 +27,7 @@ class Skeleton {
     loadAnimations() {
         this.animations.push(new AnimationGroup(this.spritesheet, 0, 0, 32, 32, 10, 0.2, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 10 * 32, 0, 32, 32, 2, 0.15, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 18 * 32, 0, 32, 32, 5, 0.15, false, true));
+        this.animations.push(new AnimationGroup(this.spritesheet, 18 * 32, 0, 32, 32, 5, 0.10, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 38 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 54 * 32, 0, 32, 32, 9, 0.15, false, true));
     };
@@ -82,7 +82,7 @@ class Skeleton {
                                 this.state = 2;
                             }
                             if (this.shootTimer === 0 && this.state === 2) {
-                                this.shootTimer = 0.6 - this.game.clockTick;
+                                this.shootTimer = 0.10 * 5 - this.game.clockTick;
                                 let projectileCenter = { x: this.BB.center.x + 4 * PARAMS.SCALE * directionUnitVector.x,
                                                          y: this.BB.center.y + 4 * PARAMS.SCALE * directionUnitVector.y };
                                 if (this.shootFlag) {
