@@ -9,6 +9,7 @@ class Minotaur {
                         // 0, 1, 2, 3, 4
         this.maxHp = 500;
         this.hp = this.maxHp;
+        this.minProximity = 15;
         this.visionDistance = 400;
         this.shotsTaken = [];
         this.shootTimer = 0;
@@ -18,7 +19,6 @@ class Minotaur {
         this.damagedTimer = 0;
         this.deadTimer = 0;
         this.chargeTimer = 0;
-        this.chargeAccumulator = 0;
         this.charging = false;
         this.velocityConstant = 2;
         this.walkSpeed = 0.15;
@@ -83,7 +83,6 @@ class Minotaur {
                         this.chargeTimer = 1;
                         this.charging = true;
                         this.attackFlag = false;
-                        this.chargeAccumulator = 0;
                         this.chargeUnitVector = unitVector({ x : this.heroCenter.x - center.x, y : this.heroCenter.y - center.y });
                         this.chargeOrigin = this.BB.center;
                         this.chargePoint = this.heroCenter;
@@ -104,7 +103,8 @@ class Minotaur {
         }
 
         if (this.state !== 4 && this.charging) {
-            if (distance(this.BB.center, this.chargeOrigin) > this.chargeDistance) {
+            let dist = distance(this.BB.center, this.chargeOrigin);
+            if (dist > this.chargeDistance || this.chargeDistance <= this.minProximity) {
                 this.velocity.x = 0;
                 this.velocity.y = 0;
                 if (!this.attackFlag) {
@@ -131,12 +131,11 @@ class Minotaur {
 
             } else {
                 if (this.chargeTimer === 0) {
-                    this.chargeAccumulator += 0.5;
                     if (this.state !== 3) {
-                        this.velocity.x += this.chargeUnitVector.x * this.velocityConstant * 3;
-                        this.velocity.y += this.chargeUnitVector.y * this.velocityConstant * 3;
+                        this.velocity.x += this.chargeUnitVector.x * this.velocityConstant * 4;
+                        this.velocity.y += this.chargeUnitVector.y * this.velocityConstant * 4;
                     } 
-                    this.animations[1].setFrameDuration(this.walkSpeed / 3);
+                    this.animations[1].setFrameDuration(this.walkSpeed / 4);
                 } else {
                     if (this.state !== 3) {
                         this.velocity.x = this.chargeUnitVector.x * this.velocityConstant;
