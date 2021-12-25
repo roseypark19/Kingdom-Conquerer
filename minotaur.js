@@ -9,7 +9,7 @@ class Minotaur {
                         // 0, 1, 2, 3, 4
         this.maxHp = 500;
         this.hp = this.maxHp;
-        this.minProximity = 5;
+        this.minProximity = 10;
         this.visionDistance = 400;
         this.shotsTaken = [];
         this.shootTimer = 0;
@@ -19,7 +19,6 @@ class Minotaur {
         this.damagedTimer = 0;
         this.deadTimer = 0;
         this.chargeTimer = 0;
-        this.chargeAccumulator = 0;
         this.charging = false;
         this.velocityConstant = 2;
         this.walkSpeed = 0.15;
@@ -80,16 +79,64 @@ class Minotaur {
                 if (entity instanceof Barbarian) {
                     let heroCenter = entity.BB.center;
                     let dist = distance(center, heroCenter);
-                    if (dist <= this.visionDistance && !this.charging && this.attackTimer === 0) {
-                        this.chargeTimer = 1;
-                        this.charging = true;
-                        this.attackFlag = false;
-                        this.chargeAccumulator = 0;
-                        this.chargeUnitVector = unitVector({ x : heroCenter.x - center.x, y : heroCenter.y - center.y });
-                        this.chargeOrigin = this.BB.center;
-                        this.chargePoint = heroCenter;
-                        this.chargeDistance = distance(this.chargePoint, this.chargeOrigin);
-                    } else if (this.damagedTimer === 0 && !this.charging) {
+                    let vector = unitVector({ x : heroCenter.x - center.x, y : heroCenter.y - center.y });
+                    if (dist <= this.visionDistance) {
+                        if (!this.charging) {
+                            this.chargeTimer = 1;
+                            this.charging = true;
+                            this.chargeOrigin = null;
+                            this.animations[1].setFrameDuration(this.walkSpeed);
+                        }
+                        if (this.damagedTimer === 0) {
+                            this.state = 1;
+                        }
+                        if (this.chargeTimer === 0 || dist <= this.minProximity) {
+                            if (!this.chargeOrigin) {
+                                this.chargeOrigin = this.BB.center;
+                                this.chargeUnitVector = vector;
+                                this.chargeDistance = distance(heroCenter, this.BB.center);
+                                this.attackFlag = false;
+                            }
+                            if (distance(this.BB.center, this.chargeOrigin) >= this.chargeDistance || dist <= this.minProximity) {
+                                this.velocity.x = 0;
+                                this.velocity.y = 0;
+                                if (!this.attackFlag) {
+                                    this.attackFlag = true;
+                                    this.attackTimer = 3 * 0.075 * 8;
+                                }
+                                this.charging = this.attackTimer > 0;
+                                if (this.damagedTimer === 0 && this.charging) {
+                                    this.state = 2;
+                                }
+                                if (this.shootTimer === 0 && this.state === 2) {
+                                    this.shootTimer = 0.075 * 8 - this.game.clockTick;
+                                    let projectileCenter = { x: this.BB.center.x, y: this.BB.center.y };
+                                    if (this.shootFlag) {
+                                        this.game.addEntity(new DamageRegion(this.game, 
+                                                                             projectileCenter.x - 12 * PARAMS.SCALE, 
+                                                                             projectileCenter.y - 12 * PARAMS.SCALE, 
+                                                                             24 * PARAMS.SCALE, 
+                                                                             24 * PARAMS.SCALE, 
+                                                                             false, 100, 0.1));
+                                    }
+                                }
+                            } else {
+                                if (this.damagedTimer === 0) {
+                                    this.animations[1].setFrameDuration(this.walkSpeed / 3);
+                                    this.velocity.x += this.chargeUnitVector.x * this.velocityConstant * 3;
+                                    this.velocity.y += this.chargeUnitVector.y * this.velocityConstant * 3;
+                                } 
+                                this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
+                                this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
+                            }
+                        } else if (this.damagedTimer === 0 && dist > this.minProximity) {
+                            this.velocity.x = vector.x * this.velocityConstant;
+                            this.velocity.y = vector.y * this.velocityConstant;
+                            this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
+                            this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
+                        }
+                    } else if (this.damagedTimer === 0 && this.attackTimer === 0) {
+                        this.charging = false;
                         this.state = 0;
                     }
                 }
@@ -97,59 +144,6 @@ class Minotaur {
         } else {
             if (this.deadTimer === 0) {
                 this.removeFromWorld = true;
-            }
-        }
-
-        if (!this.charging) {
-            this.animations[1].setFrameDuration(this.walkSpeed);
-        }
-
-        if (this.state !== 4 && this.charging) {
-            if (distance(this.BB.center, this.chargeOrigin) > this.chargeDistance) {
-                this.velocity.x = 0;
-                this.velocity.y = 0;
-                if (!this.attackFlag) {
-                    this.attackFlag = true;
-                    this.attackTimer = 3 * 0.075 * 8;
-                } else {
-                    this.charging = this.attackTimer > 0;
-                }
-                if (this.damagedTimer === 0 && this.charging) {
-                    this.state = 2;
-                }
-                if (this.shootTimer === 0 && this.state === 2) {
-                    this.shootTimer = 0.075 * 8 - this.game.clockTick;
-                    let projectileCenter = { x: this.BB.center.x, y: this.BB.center.y };
-                    if (this.shootFlag) {
-                        this.game.addEntity(new DamageRegion(this.game, 
-                                                             projectileCenter.x - 12 * PARAMS.SCALE, 
-                                                             projectileCenter.y - 12 * PARAMS.SCALE, 
-                                                             24 * PARAMS.SCALE, 
-                                                             24 * PARAMS.SCALE, 
-                                                             false, 100, 0.1));
-                    }
-                }
-
-            } else {
-                if (this.chargeTimer === 0) {
-                    this.chargeAccumulator += 0.5;
-                    if (this.state !== 3) {
-                        this.velocity.x += this.chargeUnitVector.x * this.velocityConstant * 3;
-                        this.velocity.y += this.chargeUnitVector.y * this.velocityConstant * 3;
-                    } 
-                    this.animations[1].setFrameDuration(this.walkSpeed / 3);
-                } else {
-                    if (this.state !== 3) {
-                        this.velocity.x = this.chargeUnitVector.x * this.velocityConstant;
-                        this.velocity.y = this.chargeUnitVector.y * this.velocityConstant;
-                    }
-                    this.animations[1].setFrameDuration(this.walkSpeed);
-                }
-                if (this.damagedTimer === 0) {
-                    this.state = 1;
-                }
-                this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
-                this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
             }
         }
 

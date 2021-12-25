@@ -155,7 +155,6 @@ class Barbarian {
                         this.shootTimer = this.animations[2].frameDuration * 6 - this.game.clockTick;
                         let vector = { x : mousePoint.x + this.game.camera.x - this.BB.center.x, 
                                        y : mousePoint.y + this.game.camera.y - this.BB.center.y };
-                        console.log(vector);
                         let directionUnitVector = unitVector(vector);
                         let projectileCenter = { x: this.BB.center.x + 8 * PARAMS.SCALE * directionUnitVector.x,
                                                  y: this.BB.center.y + 8 * PARAMS.SCALE * directionUnitVector.y };
@@ -210,8 +209,7 @@ class Barbarian {
         for (let theta = 2 * Math.PI; theta > 0; theta -= Math.PI / 4) {             
             this.game.addEntity(new Beam(this.game, 
                                          center.x - 32 * PARAMS.SCALE / 2,
-                                         center.y - 32 * PARAMS.SCALE / 2,
-                                         ASSET_MANAGER.getAsset("./sprites/barbarian/beams.png"), 
+                                         center.y - 32 * PARAMS.SCALE / 2, 
                                          theta));
         }
     };
@@ -255,8 +253,9 @@ class Barbarian {
 
 class Beam {
 
-    constructor(game, x, y, spritesheet, theta) {
-        Object.assign(this, { game, x, y, spritesheet, theta });
+    constructor(game, x, y, theta) {
+        Object.assign(this, { game, x, y, theta });
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/barbarian/beams.png");
         this.friendlyProjectile = true;
         this.damage = 25;
         this.id = ++PARAMS.SHOT_ID;

@@ -46,6 +46,10 @@ function oscillate(input, min, max) {
     return min + Math.abs(((input + range) % (range * 2)) - range);
 };
 
+function nearestDegree(radians) {
+    return Math.round(radians * 180 / Math.PI);
+};
+
 function rotateImage(spritesheet, xStart, yStart, width, height, theta) {
     let offscreenCanvas = document.createElement('canvas');
     let dimension = Math.max(width, height);

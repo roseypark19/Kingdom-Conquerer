@@ -39,6 +39,10 @@ class SceneManager {
         this.game.addEntity(new Skeleton(this.game, 600, -200));
         this.game.addEntity(new Skeleton(this.game, 400, -250));
         this.game.addEntity(new Skeleton(this.game, 600, -250));
+        // for (let i = 0; i < 100; i++) {
+        //     this.game.addEntity(new MinionProjectile(this.game, 750, 0, randomInt(361) * Math.PI / 180));
+        // }
+        
     };
 
     update() {
