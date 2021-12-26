@@ -12,6 +12,7 @@ ASSET_MANAGER.queueDownload("./sprites/slime/slime_mother_blue.png");
 ASSET_MANAGER.queueDownload("./sprites/minotaur/minotaur.png");
 ASSET_MANAGER.queueDownload("./sprites/skeleton/skeleton.png");
 ASSET_MANAGER.queueDownload("./sprites/projectiles/arrow.png");
+ASSET_MANAGER.queueDownload("./sprites/orc/orc_bow.png");
 
 ASSET_MANAGER.downloadAll(function () {
 	var canvas = document.getElementById('gameWorld');

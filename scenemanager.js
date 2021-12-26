@@ -39,6 +39,21 @@ class SceneManager {
         this.game.addEntity(new Skeleton(this.game, 600, -200));
         this.game.addEntity(new Skeleton(this.game, 400, -250));
         this.game.addEntity(new Skeleton(this.game, 600, -250));
+
+        this.game.addEntity(new RangedMinion(this.game, 900, -250));
+        this.game.addEntity(new RangedMinion(this.game, 950, -250));
+        this.game.addEntity(new RangedMinion(this.game, 1000, -250));
+        this.game.addEntity(new RangedMinion(this.game, 1050, -250));
+        this.game.addEntity(new RangedMinion(this.game, 1100, -250));
+
+        this.game.addEntity(new RangedMinion(this.game, 900, -200));
+        this.game.addEntity(new RangedMinion(this.game, 950, -200));
+        this.game.addEntity(new RangedMinion(this.game, 1000, -200));
+        this.game.addEntity(new RangedMinion(this.game, 1050, -200));
+        this.game.addEntity(new RangedMinion(this.game, 1100, -200));
+
+
+
         // for (let i = 0; i < 100; i++) {
         //     this.game.addEntity(new MinionProjectile(this.game, 750, 0, randomInt(361) * Math.PI / 180));
         // }

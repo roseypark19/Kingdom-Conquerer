@@ -1,7 +1,7 @@
 class DamageRegion {
 
-    constructor(game, x, y, width, height, friendly, damage, lifetime) {
-        Object.assign(this, { game, x, y, width, height, damage, lifetime });
+    constructor(game, x, y, width, height, friendly, damage, lifetime, sourcePoint) {
+        Object.assign(this, { game, x, y, width, height, damage, lifetime, sourcePoint });
         this.friendlyProjectile = friendly;
         this.id = ++PARAMS.SHOT_ID;
         this.updateBB();

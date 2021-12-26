@@ -1,6 +1,6 @@
 class Minotaur {
 
-    constructor(game, x, y, green) {
+    constructor(game, x, y) {
         Object.assign(this, { game, x, y });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/minotaur/minotaur.png");
         this.facing = [0, 0]; // down, up, right, left
@@ -57,15 +57,13 @@ class Minotaur {
             this.game.entities.forEach(entity => {
                 if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
                     this.shotsTaken.push(entity.id);
-                    if (this.damagedTimer === 0 && this.deadTimer === 0) {
-                        this.damagedTimer = 0.6 - this.game.clockTick;
-                        this.state = 3;
-                        this.charging = false;
-                        this.attackTimer = 0;
-                        let vector = { x: entity.hitBB.center.x - this.hitBB.center.x, y: entity.hitBB.center.y - this.hitBB.center.y };
-                        this.facing[0] = vector.y >= 0 ? 0 : 1;
-                        this.facing[1] = vector.x >= 0 ? 0 : 1;
-                    }
+                    this.damagedTimer = 0.6 - this.game.clockTick;
+                    this.state = 3;
+                    this.charging = false;
+                    this.attackTimer = 0;
+                    let vector = { x: entity.sourcePoint.x - this.hitBB.center.x, y: entity.sourcePoint.y - this.hitBB.center.y };
+                    this.facing[0] = vector.y >= 0 ? 0 : 1;
+                    this.facing[1] = vector.x >= 0 ? 0 : 1;
                     this.hp -= entity.damage;
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 15 * 0.15 - this.game.clockTick;

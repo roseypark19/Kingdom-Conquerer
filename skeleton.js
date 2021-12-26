@@ -53,13 +53,11 @@ class Skeleton {
             this.game.entities.forEach(entity => {
                 if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
                     this.shotsTaken.push(entity.id);
-                    if (this.damagedTimer === 0 && this.deadTimer === 0) {
-                        this.damagedTimer = 0.6 - this.game.clockTick;
-                        this.state = 3;
-                        let vector = { x: entity.hitBB.center.x - this.hitBB.center.x, y: entity.hitBB.center.y - this.hitBB.center.y };
-                        this.facing[0] = vector.y >= 0 ? 0 : 1;
-                        this.facing[1] = vector.x >= 0 ? 0 : 1;
-                    }
+                    this.damagedTimer = 0.6 - this.game.clockTick;
+                    this.state = 3;
+                    let vector = { x: entity.sourcePoint.x - this.hitBB.center.x, y: entity.sourcePoint.y - this.hitBB.center.y };
+                    this.facing[0] = vector.y >= 0 ? 0 : 1;
+                    this.facing[1] = vector.x >= 0 ? 0 : 1;
                     this.hp -= entity.damage;
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 9 * 0.15 - this.game.clockTick;

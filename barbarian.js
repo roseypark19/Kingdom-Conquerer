@@ -68,7 +68,7 @@ class Barbarian {
         if (this.state !== 4) {
             this.game.entities.forEach(entity => {
                 if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB)) {
-                    if (this.damagedTimer === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
+                    if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
                         this.damagedTimer = 0.6 - this.game.clockTick;
                         this.state = 3;
                     }
@@ -166,7 +166,7 @@ class Barbarian {
                                                                  this.BB.height / 2,
                                                                  true,
                                                                  15,
-                                                                 0.1));
+                                                                 0.1, this.BB.center));
                         }
                         
                     }
@@ -210,7 +210,7 @@ class Barbarian {
             this.game.addEntity(new Beam(this.game, 
                                          center.x - 32 * PARAMS.SCALE / 2,
                                          center.y - 32 * PARAMS.SCALE / 2, 
-                                         theta));
+                                         theta, this.BB.center));
         }
     };
 
@@ -253,8 +253,8 @@ class Barbarian {
 
 class Beam {
 
-    constructor(game, x, y, theta) {
-        Object.assign(this, { game, x, y, theta });
+    constructor(game, x, y, theta, sourcePoint) {
+        Object.assign(this, { game, x, y, theta, sourcePoint });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/barbarian/beams.png");
         this.friendlyProjectile = true;
         this.damage = 25;
