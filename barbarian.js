@@ -67,7 +67,7 @@ class Barbarian {
 
         if (this.state !== 4) {
             this.game.entities.forEach(entity => {
-                if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB)) {
+                if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB) && this.state !== 4) {
                     if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
                         this.damagedTimer = 0.6 - this.game.clockTick;
                         this.state = 3;

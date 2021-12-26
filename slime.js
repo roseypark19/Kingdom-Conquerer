@@ -49,7 +49,7 @@ class BabySlime {
 
         if (this.state !== 3) {
             this.game.entities.forEach(entity => {
-                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
+                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 4) {
                     this.shotsTaken.push(entity.id);
                     this.damagedTimer = 0.6 - this.game.clockTick;
                     this.state = 2;
@@ -200,7 +200,7 @@ class MotherSlime {
 
         if (this.state !== 3) {
             this.game.entities.forEach(entity => {
-                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
+                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 4) {
                     this.shotsTaken.push(entity.id);
                     if (this.damagedTimer === 0 && this.deadTimer === 0) {
                         this.damagedTimer = 0.6 - this.game.clockTick;

@@ -55,7 +55,7 @@ class Minotaur {
 
         if (this.state !== 4) {
             this.game.entities.forEach(entity => {
-                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id))) {
+                if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 4) {
                     this.shotsTaken.push(entity.id);
                     this.damagedTimer = 0.6 - this.game.clockTick;
                     this.state = 3;
@@ -68,6 +68,7 @@ class Minotaur {
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 15 * 0.15 - this.game.clockTick;
                         this.state = 4;
+                        console.log("death")
                         this.facing = [0, 0];
                     }
                 }
@@ -150,6 +151,8 @@ class Minotaur {
                 this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
             }
         }
+
+        console.log(this.state);
 
         this.attackFlag = this.state === 2;
 
