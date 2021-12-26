@@ -152,8 +152,6 @@ class Minotaur {
             }
         }
 
-        console.log(this.state);
-
         this.attackFlag = this.state === 2;
 
         this.x += this.velocity.x;
