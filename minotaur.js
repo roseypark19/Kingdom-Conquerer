@@ -68,7 +68,6 @@ class Minotaur {
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 15 * 0.15 - this.game.clockTick;
                         this.state = 4;
-                        console.log("death")
                         this.facing = [0, 0];
                     }
                 }
