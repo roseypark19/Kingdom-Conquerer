@@ -16,7 +16,7 @@ class BabySlime {
         this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = randomInt(3) + 1;
+        this.velocityConstant = 2;
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
         this.updateBB();
@@ -85,7 +85,7 @@ class BabySlime {
                             this.state = 1;
                         }
                         if (this.shootTimer === 0 && this.state === 1) {
-                            this.shootTimer = 0.6 - this.game.clockTick;
+                            this.shootTimer = 4 * 0.15 - this.game.clockTick;
                             let projectileCenter = { x: this.BB.center.x + 4 * PARAMS.SCALE * directionUnitVector.x,
                                                      y: this.BB.center.y + 4 * PARAMS.SCALE * directionUnitVector.y };
                             if (this.shootFlag) {
@@ -167,7 +167,7 @@ class MotherSlime {
         this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = randomInt(3) + 1;
+        this.velocityConstant = 1;
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
         this.updateBB();
@@ -238,7 +238,7 @@ class MotherSlime {
                             this.state = 1;
                         }
                         if (this.shootTimer === 0 && this.state === 1) {
-                            this.shootTimer = 0.6 - this.game.clockTick;
+                            this.shootTimer = 4 * 0.15 - this.game.clockTick;
                             let projectileCenter = { x: this.BB.center.x + 6 * PARAMS.SCALE * directionUnitVector.x,
                                                      y: this.BB.center.y + 6 * PARAMS.SCALE * directionUnitVector.y };
                             if (this.shootFlag) {
