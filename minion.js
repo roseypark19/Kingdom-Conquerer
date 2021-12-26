@@ -16,7 +16,7 @@ class RangedMinion {
         this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = 2;
+        this.velocityConstant = randomInt(3) + 1;
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
         this.updateBB();
