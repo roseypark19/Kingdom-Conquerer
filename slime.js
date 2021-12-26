@@ -54,6 +54,9 @@ class BabySlime {
                     if (this.damagedTimer === 0 && this.deadTimer === 0) {
                         this.damagedTimer = 0.6 - this.game.clockTick;
                         this.state = 2;
+                        let vector = { x: entity.hitBB.center.x - this.hitBB.center.x, y: entity.hitBB.center.y - this.hitBB.center.y };
+                        this.facing[0] = vector.y >= 0 ? 0 : 1;
+                        this.facing[1] = vector.x >= 0 ? 0 : 1;
                     }
                     this.hp -= entity.damage;
                     if (this.deadTimer === 0 && this.hp <= 0) {
@@ -74,11 +77,9 @@ class BabySlime {
                     if (dist <= this.attackDistance) {
                         let vector = { x : heroCenter.x - center.x, y : heroCenter.y - center.y };
                         let directionUnitVector = unitVector(vector);
-                        if (dist > this.minProximity) {  
-                            if (this.state !== 2) {
-                                this.velocity.x = directionUnitVector.x * this.velocityConstant;
-                                this.velocity.y = directionUnitVector.y * this.velocityConstant;
-                            } 
+                        if (dist > this.minProximity && this.damagedTimer === 0) {  
+                            this.velocity.x = directionUnitVector.x * this.velocityConstant;
+                            this.velocity.y = directionUnitVector.y * this.velocityConstant;
                             this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
                             this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
                         }
@@ -206,6 +207,9 @@ class MotherSlime {
                     if (this.damagedTimer === 0 && this.deadTimer === 0) {
                         this.damagedTimer = 0.6 - this.game.clockTick;
                         this.state = 2;
+                        let vector = { x: entity.hitBB.center.x - this.hitBB.center.x, y: entity.hitBB.center.y - this.hitBB.center.y };
+                        this.facing[0] = vector.y >= 0 ? 0 : 1;
+                        this.facing[1] = vector.x >= 0 ? 0 : 1;
                     }
                     this.hp -= entity.damage;
                     if (this.deadTimer === 0 && this.hp <= 0) {
@@ -226,13 +230,11 @@ class MotherSlime {
                     if (dist <= this.attackDistance) {
                         let vector = { x : heroCenter.x - center.x, y : heroCenter.y - center.y };
                         let directionUnitVector = unitVector(vector);
-                        if (dist > this.minProximity) {
-                            if (this.state !== 2) {
-                                this.velocity.x = directionUnitVector.x * this.velocityConstant;
-                                this.velocity.y = directionUnitVector.y * this.velocityConstant;
-                            }  
+                        if (dist > this.minProximity && this.damagedTimer === 0) {
+                            this.velocity.x = directionUnitVector.x * this.velocityConstant;
+                            this.velocity.y = directionUnitVector.y * this.velocityConstant;
                             this.facing[0] = this.velocity.y >= 0 ? 0 : 1;
-                            this.facing[1] = this.velocity.x >= 0 ? 0 : 1;
+                            this.facing[1] = this.velocity.x >= 0 ? 0 : 1; 
                         }
                         if (this.damagedTimer === 0) {
                             this.state = 1;
