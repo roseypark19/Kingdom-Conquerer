@@ -131,7 +131,7 @@ class Minotaur {
                                                              projectileCenter.y - 12 * PARAMS.SCALE, 
                                                              24 * PARAMS.SCALE, 
                                                              24 * PARAMS.SCALE, 
-                                                             false, 1, 0.1));
+                                                             false, 100, 0.1));
                     }
                 }
             } else if (this.chargeTimer === 0 && this.damagedTimer === 0) {
