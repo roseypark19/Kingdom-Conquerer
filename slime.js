@@ -16,7 +16,8 @@ class BabySlime {
         this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = 2;
+        this.velocityConstant = randomInt(3) + 2;
+        this.walkSpeed = 0.15 * (4 / this.velocityConstant);
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
         this.updateBB();
@@ -25,7 +26,7 @@ class BabySlime {
 
     loadAnimations() {
         this.animations.push(new AnimationGroup(this.spritesheet, 0, 0, 32, 32, 8, 0.4, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 32 * 32, 0, 32, 32, 4, 0.15, false, true));
+        this.animations.push(new AnimationGroup(this.spritesheet, 32 * 32, 0, 32, 32, 4, this.walkSpeed, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 48 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 64 * 32, 0, 32, 32, 9, 0.15, false, true));
     };
@@ -167,7 +168,8 @@ class MotherSlime {
         this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = 1;
+        this.velocityConstant = randomInt(3) + 2;
+        this.walkSpeed = 0.15 * (4 / this.velocityConstant);
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
         this.updateBB();
@@ -176,7 +178,7 @@ class MotherSlime {
 
     loadAnimations() {
         this.animations.push(new AnimationGroup(this.spritesheet, 0, 0, 32, 32, 8, 0.4, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 32 * 32, 0, 32, 32, 4, 0.15, false, true));
+        this.animations.push(new AnimationGroup(this.spritesheet, 32 * 32, 0, 32, 32, 4, this.walkSpeed, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 48 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 64 * 32, 0, 32, 32, 11, 0.15, false, true));
     };

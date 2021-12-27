@@ -18,8 +18,8 @@ class Minotaur {
         this.deadTimer = 0;
         this.chargeTimer = 0;
         this.charging = false;
-        this.velocityConstant = 2;
-        this.walkSpeed = 0.15;
+        this.velocityConstant = randomInt(2) + 2;
+        this.walkSpeed = 0.15 * (4 / this.velocityConstant);
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
         this.updateBB();

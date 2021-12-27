@@ -17,7 +17,8 @@ class Skeleton {
         this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = 3;
+        this.velocityConstant = randomInt(4) + 1;
+        this.walkSpeed = 0.15 * (4 / this.velocityConstant);
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
         this.updateBB();
@@ -26,7 +27,7 @@ class Skeleton {
 
     loadAnimations() {
         this.animations.push(new AnimationGroup(this.spritesheet, 0, 0, 32, 32, 10, 0.2, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 10 * 32, 0, 32, 32, 2, 0.15, false, true));
+        this.animations.push(new AnimationGroup(this.spritesheet, 10 * 32, 0, 32, 32, 2, this.walkSpeed, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 18 * 32, 0, 32, 32, 5, 0.10, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 38 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 54 * 32, 0, 32, 32, 9, 0.15, false, true));
