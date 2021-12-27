@@ -9,6 +9,7 @@ class Barbarian {
         this.maxHp = 1000;
         this.hp = this.maxHp;
         this.dexterityConstant = 0.1;
+        this.walkSpeed = 0.15;
         this.damagedTimer = 0;
         this.deadTimer = 0;
         this.shootTimer = 0;
@@ -30,7 +31,7 @@ class Barbarian {
 
     loadAnimations() {
         this.animations.push(new AnimationGroup(this.spritesheet, 0, 0, 32, 32, 16, 0.12, false, true));
-        this.animations.push(new AnimationGroup(this.spritesheet, 64 * 32, 0, 32, 32, 4, 0.15, false, true));
+        this.animations.push(new AnimationGroup(this.spritesheet, 64 * 32, 0, 32, 32, 4, this.walkSpeed, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 80 * 32, 0, 32, 32, 6, this.dexterityConstant, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 104 * 32, 0, 32, 32, 4, 0.15, false, true));
         this.animations.push(new AnimationGroup(this.spritesheet, 120 * 32, 0, 32, 32, 20, 0.09, false, true));
@@ -55,12 +56,15 @@ class Barbarian {
         this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
         this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
 
+        this.animations[1].setFrameDuration(this.battleCryCooldown > 0 && this.battleCryTimer === 0 ? this.walkSpeed / 2 : this.walkSpeed);
         this.animations[2].setFrameDuration(this.battleCryCooldown === 0 ? this.dexterityConstant : this.dexterityConstant / 3);
 
         this.thunderStrikeCooldown = Math.max(0, this.thunderStrikeCooldown - this.game.clockTick);
         this.thunderStrikeTimer = Math.max(0, this.thunderStrikeTimer - this.game.clockTick);
 
         this.facing[0] = 0;
+
+        this.velocityConstant =  0.15 / this.animations[1].frameDuration * 4;
 
         let newVelX = 0;
         let newVelY = 0;
@@ -124,7 +128,8 @@ class Barbarian {
 
             if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
                 this.state = 5;
-                this.animations[2].setFrameDuration(this.dexterityConstant / 2);
+                this.animations[1].setFrameDuration(this.walkSpeed / 2);
+                this.animations[2].setFrameDuration(this.dexterityConstant / 3);
                 this.battleCryTimer = 1.1 - this.game.clockTick;
                 this.battleCryCooldown = 5 - this.game.clockTick;
             }

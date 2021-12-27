@@ -168,7 +168,7 @@ class MotherSlime {
         this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = randomInt(3) + 2;
+        this.velocityConstant = randomInt(2) + 2;
         this.walkSpeed = 0.15 * (4 / this.velocityConstant);
         this.velocity = { x: 0, y: 0 };
         this.animations = [];

@@ -17,7 +17,7 @@ class SwordedMinion {
         this.chargeTimer = 0;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = randomInt(4) + 1;
+        this.velocityConstant = randomInt(3) + 2;
         this.walkSpeed = 0.15 * (4 / this.velocityConstant);
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
@@ -204,7 +204,7 @@ class RangedMinion {
         this.shootFlag = false;
         this.damagedTimer = 0;
         this.deadTimer = 0;
-        this.velocityConstant = randomInt(3) + 1;
+        this.velocityConstant = randomInt(2) + 2;
         this.walkSpeed = 0.15 * (4 / this.velocityConstant);
         this.velocity = { x: 0, y: 0 };
         this.animations = [];
