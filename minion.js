@@ -121,8 +121,6 @@ class SwordedMinion {
                                                                                 16 * PARAMS.SCALE, 
                                                                                 false, 50, 0.1));
                                     }
-                                } else {
-                                    this.shootTimer = 0;
                                 }
                             }
                         } else if (this.damagedTimer === 0 && this.chargeTimer === 0) {
@@ -136,7 +134,6 @@ class SwordedMinion {
                         }
                     } else if (this.damagedTimer === 0 && this.chargeTimer === 0) {
                         this.state = 0;
-                        // this.facing = [0, 0];
                     }   
                 }
             });
