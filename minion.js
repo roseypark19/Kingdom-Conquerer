@@ -2,8 +2,8 @@ class SwordedMinion {
     constructor(game, x, y) {
         Object.assign(this, { game, x, y });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/trasgo/trasgo.png");
-        this.facing = [0, 0]; // down, up, right, left
-                              // 0, 1, 0, 1 
+        this.facing = [0, randomInt(2)]; // down, up, right, left
+                                         // 0, 1, 0, 1 
         this.state = 0; // idle, walking, attacking, charged, damaged, dead
                         // 0, 1, 2, 3, 4, 5
         this.maxHp = 350;
@@ -190,8 +190,8 @@ class RangedMinion {
     constructor(game, x, y) {
         Object.assign(this, { game, x, y });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/orc/orc_bow.png");
-        this.facing = [0, 0]; // down, up, right, left
-                              // 0, 1, 0, 1 
+        this.facing = [0, randomInt(2)]; // down, up, right, left
+                                         // 0, 1, 0, 1 
         this.state = 0; // idle, walking, attacking, damaged, dead
                         // 0, 1, 2, 3, 4
         this.maxHp = 200;
@@ -308,7 +308,6 @@ class RangedMinion {
                         }
                     } else if (this.damagedTimer === 0) {
                         this.state = 0;
-                        this.facing = [0, 0];
                     }   
                 }
             });

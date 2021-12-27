@@ -3,8 +3,8 @@ class Minotaur {
     constructor(game, x, y) {
         Object.assign(this, { game, x, y });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/minotaur/minotaur.png");
-        this.facing = [0, 0]; // down, up, right, left
-                              // 0, 1, 0, 1 
+        this.facing = [0, randomInt(2)]; // down, up, right, left
+                                         // 0, 1, 0, 1 
         this.state = 0; // idle, walking, attacking, damaged, dead
                         // 0, 1, 2, 3, 4
         this.maxHp = 500;

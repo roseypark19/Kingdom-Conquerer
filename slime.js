@@ -3,8 +3,8 @@ class BabySlime {
     constructor(game, x, y, green) {
         Object.assign(this, { game, x, y, green });
         this.spritesheet = ASSET_MANAGER.getAsset(green ? "./sprites/slime/slime_green.png" : "./sprites/slime/slime_blue.png");
-        this.facing = [0, 0]; // down, up, right, left
-                              // 0, 1, 0, 1 
+        this.facing = [0, randomInt(2)]; // down, up, right, left
+                                         // 0, 1, 0, 1 
         this.state = 0; // idle, attacking, damaged, dead
                         // 0, 1, 2, 3
         this.maxHp = 150;
@@ -155,8 +155,8 @@ class MotherSlime {
     constructor(game, x, y, green) {
         Object.assign(this, { game, x, y, green });
         this.spritesheet = ASSET_MANAGER.getAsset(green ? "./sprites/slime/slime_mother_green.png" : "./sprites/slime/slime_mother_blue.png");
-        this.facing = [0, 0]; // down, up, right, left
-                              // 0, 1, 0, 1 
+        this.facing = [0, randomInt(2)]; // down, up, right, left
+                                         // 0, 1, 0, 1 
         this.state = 0; // idle, attacking, damaged, dead
                         // 0, 1, 2, 3
         this.maxHp = 300;
