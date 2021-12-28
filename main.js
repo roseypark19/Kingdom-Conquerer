@@ -15,6 +15,11 @@ ASSET_MANAGER.queueDownload("./sprites/projectiles/arrow.png");
 ASSET_MANAGER.queueDownload("./sprites/orc/orc_bow.png");
 ASSET_MANAGER.queueDownload("./sprites/trasgo/trasgo.png");
 ASSET_MANAGER.queueDownload("./sprites/ogre/ogre.png");
+ASSET_MANAGER.queueDownload("./sprites/level/cliff.png");
+ASSET_MANAGER.queueDownload("./sprites/level/door.png");
+ASSET_MANAGER.queueDownload("./sprites/level/floor.png");
+ASSET_MANAGER.queueDownload("./sprites/level/shadows.png");
+ASSET_MANAGER.queueDownload("./sprites/level/walls.png");
 
 ASSET_MANAGER.downloadAll(function () {
 	var canvas = document.getElementById('gameWorld');

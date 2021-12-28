@@ -8,8 +8,17 @@ class SceneManager {
     };
 
     loadLevel() {
+        // this.hero = new Barbarian(this.game, 750, 175);
+        // this.game.addEntity(this.hero);
+
+        // this.loadLayer(level.cliffs);
+        // this.loadLayer(level.floor);
+        // this.loadLayer(level.shadows);
+        // this.loadLayer(level.wall_base);
+        // this.loadLayer(level.doors);
         this.hero = new Barbarian(this.game, 750, 175);
         this.game.addEntity(this.hero);
+        // this.loadLayer(level.wall_toppers);
 
         this.game.addEntity(new MotherSlime(this.game, 550, 550, true));
         this.game.addEntity(new BabySlime(this.game, 650, 550, true));
@@ -41,11 +50,9 @@ class SceneManager {
         this.game.addEntity(new Skeleton(this.game, 400, -250));
         this.game.addEntity(new Skeleton(this.game, 600, -250));
 
-        // this.game.addEntity(new RangedMinion(this.game, 900, -250));
-        // this.game.addEntity(new RangedMinion(this.game, 950, -250));
-        // this.game.addEntity(new RangedMinion(this.game, 1000, -250));
-        // this.game.addEntity(new RangedMinion(this.game, 1050, -250));
-        // this.game.addEntity(new RangedMinion(this.game, 1100, -250));
+        this.game.addEntity(new RangedMinion(this.game, 900, -250));
+        this.game.addEntity(new RangedMinion(this.game, 1000, -250));
+        this.game.addEntity(new RangedMinion(this.game, 1100, -250));
 
         this.game.addEntity(new Ogre(this.game, 950, -250));
         this.game.addEntity(new Ogre(this.game, 1050, -250));
@@ -65,11 +72,9 @@ class SceneManager {
         this.game.addEntity(new Ogre(this.game, 950, 600));
         this.game.addEntity(new Ogre(this.game, 1050, 600));
 
-        // this.game.addEntity(new SwordedMinion(this.game, 900, 600));
-        // this.game.addEntity(new SwordedMinion(this.game, 950, 600));
-        // this.game.addEntity(new SwordedMinion(this.game, 1000, 600));
-        // this.game.addEntity(new SwordedMinion(this.game, 1050, 600));
-        // this.game.addEntity(new SwordedMinion(this.game, 1100, 600));
+        this.game.addEntity(new SwordedMinion(this.game, 900, 600));
+        this.game.addEntity(new SwordedMinion(this.game, 1000, 600));
+        this.game.addEntity(new SwordedMinion(this.game, 1100, 600));
 
 
 
@@ -87,4 +92,22 @@ class SceneManager {
     };
 
     draw(ctx) {};
+
+    loadLayer(property) {
+        for (let i = 0; i < level.height; i++) {
+            for  (let j = 0; j < level.width; j++) {
+                let cell = level.width * i + j;
+                let spriteCode = property.data[cell];
+                if (spriteCode != -1) {
+                    this.game.addEntity(new MapTile(this.game, 
+                                                    j * PARAMS.BLOCKWIDTH * PARAMS.SCALE,
+                                                    i * PARAMS.BLOCKWIDTH * PARAMS.SCALE,
+                                                    property.spritesheet,
+                                                    PARAMS.BLOCKWIDTH * (spriteCode % property.imageWidth),
+                                                    PARAMS.BLOCKWIDTH * (Math.floor(spriteCode / property.imageWidth)),
+                                                    property.collideable));
+                }
+            }
+        }
+    };
 }
