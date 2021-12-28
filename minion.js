@@ -272,16 +272,16 @@ class RangedMinion {
                             if (arrowTheta < 0) {
                                 arrowTheta += 2 * Math.PI;
                             }
-                            let degrees = nearest5thDegree(arrowTheta);
+                            let degrees = toDegrees(arrowTheta);
                             if (this.damagedTimer === 0) {
                                 this.state = 2;
                                 this.velocity.x = 0;
                                 this.velocity.y = 0;
-                                if (degrees <= 60 || degrees >= 300) {
+                                if (degrees <= 45 || degrees >= 315) {
                                     this.facing = [0, 0];
-                                } else if (degrees > 60 && degrees < 120) {
+                                } else if (degrees > 45 && degrees < 135) {
                                     this.facing = [1, 0];
-                                } else if (degrees <= 240 && degrees >= 120) {
+                                } else if (degrees <= 225 && degrees >= 135) {
                                     this.facing = [0, 1];
                                 } else {
                                     this.facing = [1, 1];
@@ -291,10 +291,11 @@ class RangedMinion {
                                 this.shootTimer = 0.06 * 8 - this.game.clockTick;
                                 if (this.shootFlag) {
                                     let arrowUnitVector = unitVector(arrowVector);
+                                    let rightAngle = toRadians(nearestRightAngle(toDegrees(arrowTheta)));
                                     this.game.addEntity(new MinionProjectile(this.game, 
-                                                                             this.x - 16 * PARAMS.SCALE * arrowUnitVector.x, 
-                                                                             this.y - 16 * PARAMS.SCALE * arrowUnitVector.y, 
-                                                                             degrees));
+                                                                             this.x + PARAMS.SCALE * (Math.cos(arrowTheta) - 16 * Math.cos(rightAngle)), 
+                                                                             this.y + PARAMS.SCALE * (Math.sin(arrowTheta) - 16 * Math.sin(rightAngle)), 
+                                                                             arrowTheta));
                                 }
                             }
                         } else if (this.damagedTimer === 0) {
@@ -363,14 +364,13 @@ class MinionProjectile {
 
     static rotationList = [];
 
-    constructor(game, x, y, degrees) {
-        Object.assign(this, { game, x, y, degrees });
+    constructor(game, x, y, radians) {
+        Object.assign(this, { game, x, y, radians });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/projectiles/arrow.png");
         this.friendlyProjectile = false;
         this.damage = 25;
         this.velocityConstant = 6;
-        this.velocity = { x: Math.cos(this.degrees * Math.PI / 180) * this.velocityConstant,
-                          y: Math.sin(this.degrees * Math.PI / 180) * this.velocityConstant };
+        this.velocity = { x: Math.cos(this.radians) * this.velocityConstant, y: Math.sin(this.radians) * this.velocityConstant };
         this.lifetime = 1;
         this.projectileType = 0; // 0 = arrow... to be added to later
         if (!(MinionProjectile.rotationList[this.projectileType])) {
@@ -381,12 +381,13 @@ class MinionProjectile {
     };
 
     loadAnimations() {
-        if (!(MinionProjectile.rotationList[this.projectileType][this.degrees])) {
-            MinionProjectile.rotationList[this.projectileType][this.degrees] = 
-                rotateImage(this.spritesheet, 0, 0, 32, 32, this.degrees * Math.PI / 180);
+        if (!(MinionProjectile.rotationList[this.projectileType][nearestRightAngle(toDegrees(this.radians))])) {
+            MinionProjectile.rotationList[this.projectileType][nearestRightAngle(toDegrees(this.radians))] = 
+                rotateImage(this.spritesheet, 0, 0, 32, 32, toRadians(nearestRightAngle(toDegrees(this.radians))));
         }
         this.animation = 
-            new AnimationGroup(MinionProjectile.rotationList[this.projectileType][this.degrees], 0, 0, 32, 32, 1, 1, false, true);
+            new AnimationGroup(
+                MinionProjectile.rotationList[this.projectileType][nearestRightAngle(toDegrees(this.radians))], 0, 0, 32, 32, 1, 1, false, true);
     };
 
     update() {
@@ -402,8 +403,8 @@ class MinionProjectile {
 
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
-        let hitCenter = { x: this.BB.center.x + Math.cos(this.degrees * Math.PI / 180) * 16 * PARAMS.SCALE,
-                          y: this.BB.center.y + Math.sin(this.degrees * Math.PI / 180) * 16 * PARAMS.SCALE };
+        let hitCenter = { x: this.BB.center.x + Math.cos(toRadians(nearestRightAngle(toDegrees(this.radians)))) * 16 * PARAMS.SCALE,
+                          y: this.BB.center.y + Math.sin(toRadians(nearestRightAngle(toDegrees(this.radians)))) * 16 * PARAMS.SCALE };
         this.hitBB = new BoundingBox(hitCenter.x - 2 * PARAMS.SCALE, hitCenter.y - 2 * PARAMS.SCALE, 4 * PARAMS.SCALE, 4 * PARAMS.SCALE);
     };
 

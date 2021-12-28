@@ -46,12 +46,19 @@ function oscillate(input, min, max) {
     return min + Math.abs(((input + range) % (range * 2)) - range);
 };
 
-function nearest5thDegree(radians) {
-    let degrees = radians * 180 / Math.PI;
+function toDegrees(radians) {
+    return radians * 180 / Math.PI;
+};
+
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+};
+
+function nearestRightAngle(degrees) {
     let rounded = Math.round(degrees);
-    let low = Math.max(0, rounded - rounded % 5) * Math.PI / 180;
-    let high = Math.min(360, rounded + 5 - rounded % 5) * Math.PI / 180;
-    return Math.abs(radians - low) < Math.abs(radians - high) ? Math.round(low * 180 / Math.PI) : Math.round(high * 180 / Math.PI);
+    let low = Math.max(0, rounded - rounded % 90);
+    let high = Math.min(360, rounded + 90 - rounded % 90);
+    return Math.abs(rounded - low) < Math.abs(rounded - high) ? low : high;
 };
 
 function rotateImage(spritesheet, xStart, yStart, width, height, theta) {
