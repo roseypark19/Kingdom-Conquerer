@@ -10,7 +10,7 @@ class SceneManager {
     loadLevel() {
         this.loadLayer(level.cliffs);
         this.loadLayer(level.floor);
-        // this.loadLayer(level.shadows);
+        this.loadLayer(level.shadows);
         this.loadLayer(level.wall_base);
         this.hero = new Barbarian(this.game, PARAMS.SCALE * (level.heroSpawn.x * PARAMS.BLOCKWIDTH - 16), 
                                              PARAMS.SCALE * (level.heroSpawn.y * PARAMS.BLOCKWIDTH - 16));
