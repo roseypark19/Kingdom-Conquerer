@@ -37,7 +37,7 @@ class Ogre {
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
         this.hitBB = new BoundingBox(this.x + 11 * PARAMS.SCALE, this.y + 10 * PARAMS.SCALE, 10 * PARAMS.SCALE, 10 * PARAMS.SCALE);
-        this.collisionBB = new BoundingBox(this.hitBB.x, this.hitBB.y + 5 * PARAMS.SCALE, this.hitBB.width, this.hitBB.height / 2);
+        this.collisionBB = new BoundingBox(this.hitBB.x, this.hitBB.y + 5 * PARAMS.SCALE, this.hitBB.width, this.hitBB.height / 2 + 2 * PARAMS.SCALE);
     };
 
     update() {

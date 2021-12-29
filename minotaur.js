@@ -38,7 +38,7 @@ class Minotaur {
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
         this.hitBB = new BoundingBox(this.x + 11 * PARAMS.SCALE, this.y + 8 * PARAMS.SCALE, 10 * PARAMS.SCALE, 12 * PARAMS.SCALE);
-        this.collisionBB = new BoundingBox(this.hitBB.x, this.hitBB.y + 6 * PARAMS.SCALE, 10 * PARAMS.SCALE, 6 * PARAMS.SCALE);
+        this.collisionBB = new BoundingBox(this.hitBB.x, this.hitBB.y + 6 * PARAMS.SCALE, 10 * PARAMS.SCALE, 8 * PARAMS.SCALE);
     };
 
     update() {
