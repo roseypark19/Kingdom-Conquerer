@@ -6,6 +6,7 @@ class Barbarian {
                               // 0, 1, 0, 1 
         this.state = 0; // idle, walking, shooting, damaged, dead, battle cry, thunder strike
                         // 0, 1, 2, 3, 4, 5, 6
+        this.id = ++PARAMS.LIFE_ID;
         this.maxHp = 1000;
         this.hp = this.maxHp;
         this.dexterityConstant = 0.1;
@@ -70,13 +71,12 @@ class Barbarian {
         let newVelY = 0;
 
         if (this.state !== 4) {
-            this.game.entities.forEach(entity => {
+            this.game.projectileEntities.forEach(entity => {
                 if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB) && this.state !== 4) {
                     if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
                         this.damagedTimer = 0.6 - this.game.clockTick;
                         this.state = 3;
                     }
-                    // take damage here
                     entity.removeFromWorld = true;
                     if (this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
                         this.hp -= entity.damage;
@@ -187,7 +187,7 @@ class Barbarian {
 
         // collision detection and resolve
         let collisionList = [];
-        this.game.entities.forEach(entity => {
+        this.game.collideableEntities.forEach(entity => {
             if (entity.collideable && this.collisionBB.collide(entity.BB)) { 
                 collisionList.push(entity);
             }
@@ -281,6 +281,12 @@ class Beam {
             this.y += this.velocity.y;
             this.updateBB();
         }
+
+        this.game.collideableEntities.forEach(entity => {
+            if (entity.collideable && this.hitBB.collide(entity.BB)) { 
+                this.removeFromWorld = true;
+            }
+        });
     };
 
     updateBB() {

@@ -7,6 +7,7 @@ class Ogre {
                                          // 0, 1, 0, 1 
         this.state = 0; // idle, walking, attacking, damaged, dead
                         // 0, 1, 2, 3, 4
+        this.id = ++PARAMS.LIFE_ID;
         this.maxHp = 1000;
         this.hp = this.maxHp;
         this.minProximity = 2;
@@ -35,13 +36,14 @@ class Ogre {
 
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
-        this.hitBB = new BoundingBox(this.x + 10 * PARAMS.SCALE, this.y + 8 * PARAMS.SCALE, 11 * PARAMS.SCALE, 12 * PARAMS.SCALE);
-        this.collisionBB = new BoundingBox(this.hitBB.x, this.hitBB.y + 6 * PARAMS.SCALE, 11 * PARAMS.SCALE, 6 * PARAMS.SCALE);
+        this.hitBB = new BoundingBox(this.x + 11 * PARAMS.SCALE, this.y + 10 * PARAMS.SCALE, 10 * PARAMS.SCALE, 10 * PARAMS.SCALE);
+        this.collisionBB = new BoundingBox(this.hitBB.x, this.hitBB.y + 5 * PARAMS.SCALE, this.hitBB.width, this.hitBB.height / 2);
     };
 
     update() {
 
         let prevState = this.state;
+        this.originalCollisionBB = this.collisionBB;
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -51,7 +53,7 @@ class Ogre {
         this.deadTimer = Math.max(0, this.deadTimer - this.game.clockTick);
 
         if (this.state !== 4) {
-            this.game.entities.forEach(entity => {
+            this.game.projectileEntities.forEach(entity => {
                 if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 4) {
                     this.shotsTaken.push(entity.id);
                     this.damagedTimer = 0.6 - this.game.clockTick;
@@ -71,7 +73,7 @@ class Ogre {
 
         if (this.state !== 4) {
             let center = this.BB.center;
-            this.game.entities.forEach(entity => {
+            this.game.livingEntities.forEach(entity => {
                 if (entity instanceof Barbarian) {
                     let heroCenter = entity.BB.center;
                     let dist = distance(center, heroCenter);
@@ -121,6 +123,25 @@ class Ogre {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
         this.updateBB();
+
+        // collision detection and resolve
+        let collisionList = [];
+        this.game.collideableEntities.forEach(entity => {
+            if (entity.collideable && this.collisionBB.collide(entity.BB)) { 
+                collisionList.push(entity);
+            }
+        });
+
+        if (collisionList.length > 0) {
+            collisionList.sort((boundary1, boundary2) => distance(this.collisionBB.center, boundary1.BB.center) -
+                                                         distance(this.collisionBB.center, boundary2.BB.center));
+            for (let i = 0; i < collisionList.length; i++) {
+                if (this.collisionBB.collide(collisionList[i].BB)) {
+                    Collision.resolveCollision(this, collisionList[i]);
+                    this.updateBB();
+                }
+            }
+        }
 
         if (this.state !== prevState) {
             this.animations[prevState].reset();

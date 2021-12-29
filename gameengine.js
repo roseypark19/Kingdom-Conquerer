@@ -3,6 +3,9 @@
 class GameEngine {
     constructor() {
         this.entities = [];
+        this.livingEntities = [];
+        this.collideableEntities = [];
+        this.projectileEntities = [];
         this.showOutlines = false;
         this.ctx = null;
         this.click = null;
@@ -145,6 +148,13 @@ class GameEngine {
 
     addEntity(entity) {
         this.entities.push(entity);
+        if (entity.hp) {
+            this.livingEntities.push(entity);
+        } else if (entity.collideable) {
+            this.collideableEntities.push(entity);
+        } else if (entity.hasOwnProperty("friendlyProjectile")) {
+            this.projectileEntities.push(entity);
+        }
     };
 
     draw() {
@@ -160,7 +170,7 @@ class GameEngine {
         for (let i = 0; i < entitiesCount; i++) {
             let entity = this.entities[i];
             
-            if (PARAMS.GAMEOVER && !(entity instanceof Barbarian)) {
+            if (PARAMS.GAMEOVER && !(entity instanceof Barbarian) && entity.hp) {
                 entity.removeFromWorld = true;
             }
 
@@ -172,7 +182,27 @@ class GameEngine {
 
         for (let i = this.entities.length - 1; i >= 0; --i) {
             if (this.entities[i].removeFromWorld) {
+                this.updateCustomEntities(this.entities[i]);
                 this.entities.splice(i, 1);
+            }
+        }
+    };
+
+    updateCustomEntities(deletedEntity) {
+        if (deletedEntity.hp) {
+            this.removeFromEntityList(this.livingEntities, deletedEntity.id);
+        } else if (deletedEntity.collideable) {
+            this.removeFromEntityList(this.collideableEntities, deletedEntity.id);
+        } else if (deletedEntity.hasOwnProperty("friendlyProjectile")) {
+            this.removeFromEntityList(this.projectileEntities, deletedEntity.id);
+        }
+    };
+
+    removeFromEntityList(list, id) {
+        for (let i = list.length - 1; i >= 0; --i) {
+            if (list[i].id === id) {
+                list.splice(i, 1);
+                break;
             }
         }
     };

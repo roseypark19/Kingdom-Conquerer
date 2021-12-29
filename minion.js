@@ -6,10 +6,11 @@ class SwordedMinion {
                                          // 0, 1, 0, 1 
         this.state = 0; // idle, walking, attacking, charged, damaged, dead
                         // 0, 1, 2, 3, 4, 5
+        this.id = ++PARAMS.LIFE_ID;
         this.maxHp = 350;
         this.hp = this.maxHp;
         this.minProximity = 2;
-        this.visionDistance = 400;
+        this.visionDistance = 300;
         this.attackDistance = 75;
         this.shotsTaken = [];
         this.shootTimer = 0;
@@ -43,6 +44,7 @@ class SwordedMinion {
     update() {
 
         let prevState = this.state;
+        this.originalCollisionBB = this.collisionBB;
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -53,7 +55,7 @@ class SwordedMinion {
         this.chargeTimer = Math.max(0, this.chargeTimer - this.game.clockTick);
 
         if (this.state !== 5) {
-            this.game.entities.forEach(entity => {
+            this.game.projectileEntities.forEach(entity => {
                 if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 5) {
                     this.shotsTaken.push(entity.id);
                     if (this.chargeTimer === 0) {
@@ -75,7 +77,7 @@ class SwordedMinion {
 
         if (this.state !== 5) {
             let center = this.BB.center;
-            this.game.entities.forEach(entity => {
+            this.game.livingEntities.forEach(entity => {
                 if (entity instanceof Barbarian) {
                     let heroCenter = entity.BB.center;
                     let dist = distance(center, heroCenter);
@@ -149,6 +151,25 @@ class SwordedMinion {
         this.y += this.velocity.y;
         this.updateBB();
 
+        // collision detection and resolve
+        let collisionList = [];
+        this.game.collideableEntities.forEach(entity => {
+            if (entity.collideable && this.collisionBB.collide(entity.BB)) { 
+                collisionList.push(entity);
+            }
+        });
+
+        if (collisionList.length > 0) {
+            collisionList.sort((boundary1, boundary2) => distance(this.collisionBB.center, boundary1.BB.center) -
+                                                            distance(this.collisionBB.center, boundary2.BB.center));
+            for (let i = 0; i < collisionList.length; i++) {
+                if (this.collisionBB.collide(collisionList[i].BB)) {
+                    Collision.resolveCollision(this, collisionList[i]);
+                    this.updateBB();
+                }
+            }
+        }
+
         if (this.state !== prevState) {
             this.animations[prevState].reset();
         }
@@ -194,11 +215,12 @@ class RangedMinion {
                                          // 0, 1, 0, 1 
         this.state = 0; // idle, walking, attacking, damaged, dead
                         // 0, 1, 2, 3, 4
+        this.id = ++PARAMS.LIFE_ID;
         this.maxHp = 200;
         this.hp = this.maxHp;
         this.minProximity = 2;
-        this.visionDistance = 400;
-        this.attackDistance = 300;
+        this.visionDistance = 300;
+        this.attackDistance = 250;
         this.shotsTaken = [];
         this.shootTimer = 0;
         this.shootFlag = false;
@@ -229,6 +251,7 @@ class RangedMinion {
     update() {
 
         let prevState = this.state;
+        this.originalCollisionBB = this.collisionBB;
         this.facing[0] = 0;
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -238,7 +261,7 @@ class RangedMinion {
         this.deadTimer = Math.max(0, this.deadTimer - this.game.clockTick);
 
         if (this.state !== 4) {
-            this.game.entities.forEach(entity => {
+            this.game.projectileEntities.forEach(entity => {
                 if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 4) {
                     this.shotsTaken.push(entity.id);
                     this.damagedTimer = 0.6 - this.game.clockTick;
@@ -258,7 +281,7 @@ class RangedMinion {
 
         if (this.state !== 4) {
             let center = this.BB.center;
-            this.game.entities.forEach(entity => {
+            this.game.livingEntities.forEach(entity => {
                 if (entity instanceof Barbarian) {
                     let heroCenter = entity.BB.center;
                     let dist = distance(center, heroCenter);
@@ -290,7 +313,6 @@ class RangedMinion {
                             if (this.shootTimer === 0 && this.state === 2) {
                                 this.shootTimer = 0.06 * 8 - this.game.clockTick;
                                 if (this.shootFlag) {
-                                    let arrowUnitVector = unitVector(arrowVector);
                                     let rightAngle = toRadians(nearestRightAngle(toDegrees(arrowTheta)));
                                     this.game.addEntity(new MinionProjectile(this.game, 
                                                                              this.x + PARAMS.SCALE * (Math.cos(arrowTheta) - 16 * Math.cos(rightAngle)), 
@@ -323,6 +345,25 @@ class RangedMinion {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
         this.updateBB();
+
+        // collision detection and resolve
+        let collisionList = [];
+        this.game.collideableEntities.forEach(entity => {
+            if (entity.collideable && this.collisionBB.collide(entity.BB)) { 
+                collisionList.push(entity);
+            }
+        });
+
+        if (collisionList.length > 0) {
+            collisionList.sort((boundary1, boundary2) => distance(this.collisionBB.center, boundary1.BB.center) -
+                                                            distance(this.collisionBB.center, boundary2.BB.center));
+            for (let i = 0; i < collisionList.length; i++) {
+                if (this.collisionBB.collide(collisionList[i].BB)) {
+                    Collision.resolveCollision(this, collisionList[i]);
+                    this.updateBB();
+                }
+            }
+        }
 
         if (this.state !== prevState) {
             this.animations[prevState].reset();
@@ -368,6 +409,7 @@ class MinionProjectile {
         Object.assign(this, { game, x, y, radians });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/projectiles/arrow.png");
         this.friendlyProjectile = false;
+        this.id = ++PARAMS.SHOT_ID;
         this.damage = 25;
         this.velocityConstant = 6;
         this.velocity = { x: Math.cos(this.radians) * this.velocityConstant, y: Math.sin(this.radians) * this.velocityConstant };
@@ -399,6 +441,11 @@ class MinionProjectile {
             this.y += this.velocity.y;
             this.updateBB();
         }
+        this.game.collideableEntities.forEach(entity => {
+            if (entity.collideable && this.hitBB.collide(entity.BB)) { 
+                this.removeFromWorld = true;
+            }
+        });
     };
 
     updateBB() {
