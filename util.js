@@ -3,9 +3,9 @@ const PARAMS = {
     DEBUG : false,
     DEBUG_WIDTH : 1,
     DEBUG_COLOR: "Red",
-    CANVAS_WIDTH : 900,
-    CANVAS_HEIGHT : 900,
+    CANVAS_DIMENSION : 900,
     SCALE : 4,
+    MMAP_SCALE: 0.5,
     GAMEOVER: false,
     LIFE_ID: 0,
     SHOT_ID: 0,
@@ -78,6 +78,14 @@ function rotateImage(spritesheet, xStart, yStart, width, height, theta) {
                            height < dimension ? (dimension - height) / 2 : 0, width, height);
     offscreenCtx.restore();
     return offscreenCanvas;
+};
+
+function mMapDimension() {
+    return PARAMS.CANVAS_DIMENSION / 4.5;
+};
+
+function mMapCanvasDimension() {
+    return mMapDimension() * 21 / 25;
 };
 
 // creates an alias for requestAnimationFrame for backwards compatibility

@@ -19,16 +19,22 @@ class SceneManager {
             this.randomSpawn(level.enemySpawns[i], randomInt(3));
         }
         this.loadLayer(level.wall_toppers);
+        this.mmap = new Minimap(this.game, PARAMS.CANVAS_DIMENSION - mMapDimension() - 20, 20);
     };
 
     update() {
         PARAMS.DEBUG = document.getElementById("debug").checked;
-        let midpoint = { x : PARAMS.CANVAS_WIDTH / 2 - PARAMS.BLOCKWIDTH / 2, y : PARAMS.CANVAS_HEIGHT / 2 - PARAMS.BLOCKWIDTH / 2 };
+        let midpoint = { x : PARAMS.CANVAS_DIMENSION / 2, y : PARAMS.CANVAS_DIMENSION / 2 };
         this.x = this.hero.BB.center.x - midpoint.x;
         this.y = this.hero.BB.center.y - midpoint.y;
+        midpoint = { x : mMapCanvasDimension() / 2, y : mMapCanvasDimension() / 2 };
+        this.mmX = this.hero.BB.center.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - midpoint.x;
+        this.mmY = this.hero.BB.center.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - midpoint.y;
     };
 
-    draw(ctx) {};
+    draw(ctx) {
+        this.mmap.draw(ctx);
+    };
 
     loadLayer(property) {
         for (let i = 0; i < level.height; i++) {
@@ -116,4 +122,28 @@ class SceneManager {
         }
         return pts;
     };
-}
+};
+
+class Minimap {
+    constructor(game, x, y) {
+        Object.assign(this, { game, x, y });
+        this.canvas = document.createElement("canvas");
+        this.canvas.width = mMapCanvasDimension();
+        this.canvas.height = mMapCanvasDimension();
+        this.frameSprite = ASSET_MANAGER.getAsset("./sprites/gui/panels_slots.png");
+    };
+
+    draw(ctx) {
+        let context = this.canvas.getContext("2d");
+        context.fillStyle = "Black";
+        context.fillRect(0, 0, mMapCanvasDimension(), mMapCanvasDimension());
+        this.game.entities.forEach(entity => {
+            if (entity.drawMmap) {
+                entity.drawMmap(context);
+            }
+        });
+        ctx.drawImage(this.canvas, this.x + (mMapDimension() - mMapCanvasDimension()) / 2, 
+                                   this.y + (mMapDimension() - mMapCanvasDimension()) / 2);
+        ctx.drawImage(this.frameSprite, 479, 159, 50, 50, this.x, this.y, mMapDimension(), mMapDimension());
+    };
+};

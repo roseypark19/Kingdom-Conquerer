@@ -141,6 +141,17 @@ class BabySlime {
         }
     };
 
+    drawMmap(ctx) {
+        ctx.fillStyle = "Red";
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 12 * PARAMS.MMAP_SCALE, 
+                       this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 12 * PARAMS.MMAP_SCALE, 
+                       8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
+        ctx.fillRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 12 * PARAMS.MMAP_SCALE, 
+                     this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 12 * PARAMS.MMAP_SCALE, 
+                     8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
+    };
+
     draw(ctx) {
         this.animations[this.state].drawFrame(
             this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE, this.facing[0], this.facing[1]);
@@ -319,6 +330,17 @@ class MotherSlime {
         if (this.state !== prevState) {
             this.animations[prevState].reset();
         }
+    };
+
+    drawMmap(ctx) {
+        ctx.fillStyle = "Red";
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 12 * PARAMS.MMAP_SCALE, 
+                       this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 12 * PARAMS.MMAP_SCALE, 
+                       8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
+        ctx.fillRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 12 * PARAMS.MMAP_SCALE, 
+                     this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 12 * PARAMS.MMAP_SCALE, 
+                     8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
     };
 
     draw(ctx) {

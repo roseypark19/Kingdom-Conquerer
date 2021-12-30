@@ -254,6 +254,17 @@ class Barbarian {
             ctx.strokeRect(this.collisionBB.x - this.game.camera.x, this.collisionBB.y - this.game.camera.y, this.collisionBB.width, this.collisionBB.height);
         }
     };
+
+    drawMmap(ctx) {
+        ctx.fillStyle = "Blue";
+        ctx.strokeStyle = "Blue";
+        ctx.strokeRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 12 * PARAMS.MMAP_SCALE, 
+                       this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 12 * PARAMS.MMAP_SCALE, 
+                       8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
+        ctx.fillRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 12 * PARAMS.MMAP_SCALE, 
+                     this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 12 * PARAMS.MMAP_SCALE, 
+                     8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
+    };
 };
 
 class Beam {

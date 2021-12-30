@@ -10,6 +10,27 @@ class MapTile {
 
     update() {};
 
+    drawMmap(ctx) {
+        let paint = false;
+        if (this.spritesheet === "./sprites/level/floor.png") {
+            paint = true;
+            ctx.strokeStyle = rgb(97, 112, 114);
+            ctx.fillStyle = rgb(97, 112, 114);
+        } else if (this.collideable) {
+            paint = true;
+            ctx.strokeStyle = rgb(48, 48, 48);
+            ctx.fillStyle = rgb(48, 48, 48);
+        }
+        if (paint) {
+            ctx.strokeRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX, 
+                           this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY, 
+                           8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
+            ctx.fillRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX, 
+                         this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY, 
+                         8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
+        }
+    };
+
     draw(ctx) {
         this.animator.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE);
         if (this.BB && PARAMS.DEBUG) {
