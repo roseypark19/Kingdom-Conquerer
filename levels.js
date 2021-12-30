@@ -1,9 +1,11 @@
-const level = 
+const levelOne = 
 {
     width : 143,
     height : 199,
 
     heroSpawn: { x: 14.5, y: 82.5 },
+
+    music: "./audio/dungeon.mp3",
 
     enemySpawns: 
     [

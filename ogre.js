@@ -62,10 +62,12 @@ class Ogre {
                     this.facing[0] = vector.y >= 0 ? 0 : 1;
                     this.facing[1] = vector.x >= 0 ? 0 : 1;
                     this.hp -= entity.damage;
+                    ASSET_MANAGER.playAsset("./audio/minotaur_ogre_hit.mp3");
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 14 * 0.15 - this.game.clockTick;
                         this.state = 4;
                         this.facing = [0, 0];
+                        ASSET_MANAGER.playAsset("./audio/minotaur_ogre_death.mp3");
                     }
                 }
             });

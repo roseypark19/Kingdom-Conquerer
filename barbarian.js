@@ -80,18 +80,21 @@ class Barbarian {
                     entity.removeFromWorld = true;
                     if (this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
                         this.hp -= entity.damage;
+                        ASSET_MANAGER.playAsset("./audio/hero_hit.mp3");
                     }
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 17 * 0.1 - this.game.clockTick;
                         this.state = 4;
                         this.facing = [0, 0];
                         PARAMS.GAMEOVER = true;
+                        ASSET_MANAGER.pauseBackgroundMusic();
+                        ASSET_MANAGER.playAsset("./audio/hero_death.mp3");
                     }
                 }
             });
         }
 
-        if (this.state !== 4) {
+        if (this.state !== 4 && !this.game.camera.title) {
             if (this.game.right) {
                 newVelX += this.velocityConstant;
                 this.facing[1] = 0;
@@ -124,7 +127,7 @@ class Barbarian {
         this.y += this.velocity.y;
         this.updateBB();
 
-        if (this.state !== 4) {
+        if (this.state !== 4 && !this.game.camera.title) {
 
             if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
                 this.state = 5;
@@ -144,6 +147,7 @@ class Barbarian {
             if (this.thunderStrikeTimer <= 0.1 && this.thunderStrikeTimer > 0 && this.thunderStrikeFlag) {
                 this.thunderStrikeFlag = false;
                 this.spawnBeams();
+                ASSET_MANAGER.playAsset("./audio/lightning.mp3")
             }
 
             if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.damagedTimer === 0) {
@@ -164,6 +168,7 @@ class Barbarian {
                         let projectileCenter = { x: this.BB.center.x + 8 * PARAMS.SCALE * directionUnitVector.x,
                                                  y: this.BB.center.y + 8 * PARAMS.SCALE * directionUnitVector.y };
                         if (this.shootFlag) {
+                            ASSET_MANAGER.playAsset("./audio/sword.mp3");
                             this.game.addEntity(new DamageRegion(this.game, 
                                                                  projectileCenter.x - 8 * PARAMS.SCALE,
                                                                  projectileCenter.y - 8 * PARAMS.SCALE,
@@ -178,7 +183,7 @@ class Barbarian {
                 }
             }
         } else {
-            if (this.deadTimer === 0) {
+            if (this.deadTimer === 0 && !this.game.camera.title) {
                 this.removeFromWorld = true;
             }
         }
@@ -228,10 +233,6 @@ class Barbarian {
     draw(ctx) {
         this.animations[this.state].drawFrame(
             this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE, this.facing[0], this.facing[1]);
-
-        //     this.a += 1 * Math.PI / 180;
-        // let sprite = rotateImage(ASSET_MANAGER.getAsset("./sprites/projectiles/arrow.png"), 0, 0, 32, 32, this.a, 4);
-        // ctx.drawImage(sprite, this.x - this.game.camera.x, this.y - this.game.camera.y)
 
         if (this.hp > 0) {
             ctx.lineWidth = 1;

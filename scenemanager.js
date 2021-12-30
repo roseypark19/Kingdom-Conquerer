@@ -4,39 +4,101 @@ class SceneManager {
         this.game.camera = this;
         this.x = 0;
         this.y = 0;
-        this.loadLevel();
+        this.elapsed = 0;
+        this.loadLevel(levelOne, true);
     };
 
-    loadLevel() {
-        this.loadLayer(level.cliffs);
-        this.loadLayer(level.floor);
-        this.loadLayer(level.shadows);
-        this.loadLayer(level.wall_base);
+    clearEntities() {
+        this.game.entities.forEach(entity => entity.removeFromWorld = true);
+    };
+
+    loadLevel(level, title) {
+        this.title = title;
+        this.clearEntities();
+        this.loadLayer(level.cliffs, level);
+        this.loadLayer(level.floor, level);
+        this.loadLayer(level.shadows, level);
+        this.loadLayer(level.wall_base, level);
         this.hero = new Barbarian(this.game, PARAMS.SCALE * (level.heroSpawn.x * PARAMS.BLOCKWIDTH - 16), 
                                              PARAMS.SCALE * (level.heroSpawn.y * PARAMS.BLOCKWIDTH - 16));
         this.game.addEntity(this.hero);
         for (let i = 0; i < level.enemySpawns.length; i++) {
             this.randomSpawn(level.enemySpawns[i], randomInt(3));
         }
-        this.loadLayer(level.wall_toppers);
+        this.loadLayer(level.wall_toppers, level);
         this.mmap = new Minimap(this.game, PARAMS.CANVAS_DIMENSION - mMapDimension() - 20, 20);
+        if (level.music && !this.title) {
+            ASSET_MANAGER.pauseBackgroundMusic();
+            ASSET_MANAGER.playAsset(level.music);
+        }
     };
 
     update() {
+        if (PARAMS.GAMEOVER) {
+            this.elapsed = Math.min(4, this.elapsed + this.game.clockTick);
+        }
         PARAMS.DEBUG = document.getElementById("debug").checked;
+        this.updateAudio();
+
+        if (this.title && this.game.click) {
+            if (this.game.click.x > this.hero.BB.center.x - this.x - 2.5 * 3 * PARAMS.BLOCKWIDTH && 
+                this.game.click.x < this.hero.BB.center.x - this.x + 5 * 3 * PARAMS.BLOCKWIDTH &&
+                this.game.click.y > this.hero.BB.bottom - this.y && 
+                this.game.click.y < this.hero.BB.bottom - this.y + 3 * PARAMS.BLOCKWIDTH) {
+                this.loadLevel(levelOne, false);
+            }
+        }
+
         let midpoint = { x : PARAMS.CANVAS_DIMENSION / 2, y : PARAMS.CANVAS_DIMENSION / 2 };
         this.x = this.hero.BB.center.x - midpoint.x;
         this.y = this.hero.BB.center.y - midpoint.y;
         midpoint = { x : mMapCanvasDimension() / 2, y : mMapCanvasDimension() / 2 };
         this.mmX = this.hero.BB.center.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - midpoint.x;
         this.mmY = this.hero.BB.center.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - midpoint.y;
+
+        if (PARAMS.GAMEOVER && this.elapsed === 4) {
+            PARAMS.GAMEOVER = false;
+            this.game.click = null;
+            this.elapsed = 0;
+            this.loadLevel(levelOne, true);
+        }
     };
 
-    draw(ctx) {
-        this.mmap.draw(ctx);
+    updateAudio() {
+        let mute = document.getElementById("mute").checked;
+        let volume = document.getElementById("volume").value;
+        ASSET_MANAGER.muteAudio(mute);
+        ASSET_MANAGER.adjustVolume(volume);
     };
 
-    loadLayer(property) {
+    draw(ctx) { 
+        if (this.title) {
+            ctx.font = 5 * PARAMS.BLOCKWIDTH + 'px "Press Start 2P"';
+            ctx.fillStyle = "White";
+            ctx.fillText("SOLITARY SLAMMER", 
+                         this.hero.BB.center.x - this.x - 8 * 5 * PARAMS.BLOCKWIDTH, 
+                         this.hero.BB.top - this.y);
+            ctx.font = 3 * PARAMS.BLOCKWIDTH + 'px "Press Start 2P"';
+            ctx.fillStyle = this.game.mouse && 
+                            this.game.mouse.x > this.hero.BB.center.x - this.x - 2.5 * 3 * PARAMS.BLOCKWIDTH && 
+                            this.game.mouse.x < this.hero.BB.center.x - this.x + 5 * 3 * PARAMS.BLOCKWIDTH &&
+                            this.game.mouse.y > this.hero.BB.bottom - this.y && 
+                            this.game.mouse.y < this.hero.BB.bottom - this.y + 3 * PARAMS.BLOCKWIDTH ? "Black" : "White";
+            ctx.fillText("START", 
+                         this.hero.BB.center.x - this.x - 2.5 * 3 * PARAMS.BLOCKWIDTH, 
+                         this.hero.BB.bottom - this.y + 3 * PARAMS.BLOCKWIDTH);
+        } else if (PARAMS.GAMEOVER) {
+            ctx.fillStyle = "Red";
+            ctx.font = 5 * PARAMS.BLOCKWIDTH + 'px "Press Start 2P"';
+            ctx.fillText("GAME OVER", 
+                         this.hero.BB.center.x - this.x - 4.5 * 5 * PARAMS.BLOCKWIDTH, 
+                         this.hero.BB.top - this.y);
+        } else {
+            this.mmap.draw(ctx);
+        } 
+    };
+
+    loadLayer(property, level) {
         for (let i = 0; i < level.height; i++) {
             for  (let j = 0; j < level.width; j++) {
                 let cell = level.width * i + j;
@@ -138,7 +200,6 @@ class Minimap {
         context.fillStyle = "Black";
         context.fillRect(0, 0, mMapCanvasDimension(), mMapCanvasDimension());
         this.game.entities.forEach(entity => {
-            // console.log(this.game.camera.hero)
             if (entity.drawMmap && 
                 (Math.abs(this.game.camera.hero.BB.center.x - entity.BB.center.x) <= PARAMS.CANVAS_DIMENSION * 0.5 / PARAMS.MMAP_SCALE &&
                  Math.abs(this.game.camera.hero.BB.center.y - entity.BB.center.y) <= PARAMS.CANVAS_DIMENSION * 0.5 / PARAMS.MMAP_SCALE)) {

@@ -65,11 +65,13 @@ class SwordedMinion {
                         this.facing[0] = vector.y >= 0 ? 0 : 1;
                         this.facing[1] = vector.x >= 0 ? 0 : 1;
                         this.hp -= entity.damage;
+                        ASSET_MANAGER.playAsset("./audio/trasgo_hit.mp3");
                     }
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 11 * 0.15 - this.game.clockTick;
                         this.state = 5;
                         this.facing = [0, 0];
+                        ASSET_MANAGER.playAsset("./audio/trasgo_death.mp3");
                     }
                 }
             });
@@ -281,10 +283,12 @@ class RangedMinion {
                     this.facing[0] = vector.y >= 0 ? 0 : 1;
                     this.facing[1] = vector.x >= 0 ? 0 : 1;
                     this.hp -= entity.damage;
+                    ASSET_MANAGER.playAsset("./audio/orc_hit.mp3");
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 11 * 0.15 - this.game.clockTick;
                         this.state = 4;
                         this.facing = [0, 0];
+                        ASSET_MANAGER.playAsset("./audio/orc_death.mp3");
                     }
                 }
             });
