@@ -140,8 +140,8 @@ class Minimap {
         this.game.entities.forEach(entity => {
             // console.log(this.game.camera.hero)
             if (entity.drawMmap && 
-                (Math.abs(this.game.camera.hero.BB.center.x - entity.BB.center.x) <= PARAMS.CANVAS_DIMENSION * 1.5 &&
-                 Math.abs(this.game.camera.hero.BB.center.y - entity.BB.center.y) <= PARAMS.CANVAS_DIMENSION * 1.5)) {
+                (Math.abs(this.game.camera.hero.BB.center.x - entity.BB.center.x) <= PARAMS.CANVAS_DIMENSION * 1.25 &&
+                 Math.abs(this.game.camera.hero.BB.center.y - entity.BB.center.y) <= PARAMS.CANVAS_DIMENSION * 1.25)) {
                 entity.drawMmap(context);
             }
         });
