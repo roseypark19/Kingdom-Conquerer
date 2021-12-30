@@ -138,7 +138,10 @@ class Minimap {
         context.fillStyle = "Black";
         context.fillRect(0, 0, mMapCanvasDimension(), mMapCanvasDimension());
         this.game.entities.forEach(entity => {
-            if (entity.drawMmap) {
+            // console.log(this.game.camera.hero)
+            if (entity.drawMmap && 
+                (Math.abs(this.game.camera.hero.BB.center.x - entity.BB.center.x) <= PARAMS.CANVAS_DIMENSION * 1.5 &&
+                 Math.abs(this.game.camera.hero.BB.center.y - entity.BB.center.y) <= PARAMS.CANVAS_DIMENSION * 1.5)) {
                 entity.drawMmap(context);
             }
         });

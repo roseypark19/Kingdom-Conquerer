@@ -9,6 +9,7 @@ class DamageRegion {
 
     updateBB() {
         this.hitBB = new BoundingBox(this.x, this.y, this.width, this.height);
+        this.BB = this.hitBB;
     };
 
     update() {

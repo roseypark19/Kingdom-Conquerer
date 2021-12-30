@@ -7,7 +7,7 @@ class BoundingBox {
         this.top = y;
         this.right = this.left + this.width;
         this.bottom = this.top + this.height;
-        this.center = { x : this.x + this.width / 2, y : this.y + this.height / 2 };
+        this.center = { x : this.x + this.width / 2.0, y : this.y + this.height / 2.0 };
     };
 
     collide(other) {
