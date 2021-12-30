@@ -324,10 +324,9 @@ class RangedMinion {
                             if (this.shootTimer === 0 && this.state === 2) {
                                 this.shootTimer = 0.06 * 8 - this.game.clockTick;
                                 if (this.shootFlag) {
-                                    let rightAngle = toRadians(nearestRightAngle(toDegrees(arrowTheta)));
                                     this.game.addEntity(new MinionProjectile(this.game, 
-                                                                             this.x + PARAMS.SCALE * (Math.cos(arrowTheta) - 16 * Math.cos(rightAngle)), 
-                                                                             this.y + PARAMS.SCALE * (Math.sin(arrowTheta) - 16 * Math.sin(rightAngle)), 
+                                                                             this.x + PARAMS.SCALE * -8 * Math.cos(arrowTheta), 
+                                                                             this.y + PARAMS.SCALE * -8 * Math.sin(arrowTheta), 
                                                                              arrowTheta));
                                 }
                             }
@@ -429,14 +428,17 @@ class MinionProjectile {
 
     constructor(game, x, y, radians) {
         Object.assign(this, { game, x, y, radians });
+        this.roundedDegrees = Math.round(toDegrees(this.radians));
+        this.roundedRadians = toRadians(this.roundedDegrees);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/projectiles/arrow.png");
         this.friendlyProjectile = false;
         this.id = ++PARAMS.SHOT_ID;
         this.damage = 25;
         this.velocityConstant = 6;
-        this.velocity = { x: Math.cos(this.radians) * this.velocityConstant, y: Math.sin(this.radians) * this.velocityConstant };
+        this.velocity = { x: Math.cos(this.roundedRadians) * this.velocityConstant, 
+                          y: Math.sin(this.roundedRadians) * this.velocityConstant };
         this.lifetime = 1;
-        this.projectileType = 0; // 0 = arrow... to be added to later
+        this.projectileType = 0; // 0 = arrow... more to be added to later
         if (!(MinionProjectile.rotationList[this.projectileType])) {
             MinionProjectile.rotationList[this.projectileType] = [];
         }
@@ -445,13 +447,13 @@ class MinionProjectile {
     };
 
     loadAnimations() {
-        if (!(MinionProjectile.rotationList[this.projectileType][nearestRightAngle(toDegrees(this.radians))])) {
-            MinionProjectile.rotationList[this.projectileType][nearestRightAngle(toDegrees(this.radians))] = 
-                rotateImage(this.spritesheet, 0, 0, 32, 32, toRadians(nearestRightAngle(toDegrees(this.radians))));
+        if (!(MinionProjectile.rotationList[this.projectileType][this.roundedDegrees])) {
+            MinionProjectile.rotationList[this.projectileType][this.roundedDegrees] = 
+                rotateImage(this.spritesheet, 0, 0, 32, 32, this.roundedRadians, PARAMS.SCALE);
         }
         this.animation = 
             new AnimationGroup(
-                MinionProjectile.rotationList[this.projectileType][nearestRightAngle(toDegrees(this.radians))], 0, 0, 32, 32, 1, 1, false, true);
+                MinionProjectile.rotationList[this.projectileType][this.roundedDegrees], 0, 0, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE, 1, 1, false, true);
     };
 
     update() {
@@ -472,13 +474,13 @@ class MinionProjectile {
 
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, 32 * PARAMS.SCALE, 32 * PARAMS.SCALE);
-        let hitCenter = { x: this.BB.center.x + Math.cos(toRadians(nearestRightAngle(toDegrees(this.radians)))) * 16 * PARAMS.SCALE,
-                          y: this.BB.center.y + Math.sin(toRadians(nearestRightAngle(toDegrees(this.radians)))) * 16 * PARAMS.SCALE };
+        let hitCenter = { x: this.BB.center.x + Math.cos(this.roundedRadians) * 16 * PARAMS.SCALE,
+                          y: this.BB.center.y + Math.sin(this.roundedRadians) * 16 * PARAMS.SCALE };
         this.hitBB = new BoundingBox(hitCenter.x - 2 * PARAMS.SCALE, hitCenter.y - 2 * PARAMS.SCALE, 4 * PARAMS.SCALE, 6 * PARAMS.SCALE);
     };
 
     draw(ctx) {
-        this.animation.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE);
+        this.animation.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, 1);
 
         if (PARAMS.DEBUG) {
             ctx.lineWidth = PARAMS.DEBUG_WIDTH;

@@ -229,6 +229,10 @@ class Barbarian {
         this.animations[this.state].drawFrame(
             this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, PARAMS.SCALE, this.facing[0], this.facing[1]);
 
+        //     this.a += 1 * Math.PI / 180;
+        // let sprite = rotateImage(ASSET_MANAGER.getAsset("./sprites/projectiles/arrow.png"), 0, 0, 32, 32, this.a, 4);
+        // ctx.drawImage(sprite, this.x - this.game.camera.x, this.y - this.game.camera.y)
+
         if (this.hp > 0) {
             ctx.lineWidth = 1;
             ctx.strokeStyle = "Black";
