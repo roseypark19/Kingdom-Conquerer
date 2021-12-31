@@ -6,6 +6,7 @@ class GameEngine {
         this.livingEntities = [];
         this.collideableEntities = [];
         this.projectileEntities = [];
+        this.livingCount = 0;
         this.showOutlines = false;
         this.ctx = null;
         this.click = null;
@@ -150,6 +151,7 @@ class GameEngine {
         this.entities.push(entity);
         if (entity.hp) {
             this.livingEntities.push(entity);
+            this.livingCount++;
         } else if (entity.collideable) {
             this.collideableEntities.push(entity);
         } else if (entity.hasOwnProperty("friendlyProjectile")) {
@@ -174,7 +176,7 @@ class GameEngine {
         for (let i = 0; i < entitiesCount; i++) {
             let entity = this.entities[i];
             
-            if (PARAMS.GAMEOVER && !(entity instanceof Barbarian) && entity.hp) {
+            if (PARAMS.GAMEOVER && ((!(entity instanceof Barbarian) && entity.hasOwnProperty("hp")) || entity.hasOwnProperty("friendlyProjectile"))) {
                 entity.removeFromWorld = true;
             }
 
@@ -190,10 +192,17 @@ class GameEngine {
                 this.entities.splice(i, 1);
             }
         }
+        
+        if (!PARAMS.GAMEOVER && this.livingCount === 1 && this.camera.hero.hp > 0) {
+            PARAMS.GAMEOVER = true;
+            ASSET_MANAGER.pauseBackgroundMusic();
+            ASSET_MANAGER.playAsset("./audio/victory.mp3");
+        }
     };
 
     updateCustomEntities(deletedEntity) {
-        if (deletedEntity.hp) {
+        if (deletedEntity.hasOwnProperty("hp")) {
+            this.livingCount--;
             this.removeFromEntityList(this.livingEntities, deletedEntity.id);
         } else if (deletedEntity.collideable) {
             this.removeFromEntityList(this.collideableEntities, deletedEntity.id);

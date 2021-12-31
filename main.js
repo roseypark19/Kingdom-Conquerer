@@ -37,6 +37,7 @@ ASSET_MANAGER.queueDownload("./audio/trasgo_hit.mp3");
 ASSET_MANAGER.queueDownload("./audio/trasgo_death.mp3");
 ASSET_MANAGER.queueDownload("./audio/hero_hit.mp3");
 ASSET_MANAGER.queueDownload("./audio/lightning.mp3");
+ASSET_MANAGER.queueDownload("./audio/victory.mp3");
 
 ASSET_MANAGER.downloadAll(function () {
 	let canvas = document.getElementById('gameWorld');

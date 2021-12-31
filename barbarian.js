@@ -94,7 +94,7 @@ class Barbarian {
             });
         }
 
-        if (this.state !== 4 && !this.game.camera.title) {
+        if (this.state !== 4 && !this.game.camera.title && !PARAMS.GAMEOVER) {
             if (this.game.right) {
                 newVelX += this.velocityConstant;
                 this.facing[1] = 0;
@@ -127,7 +127,7 @@ class Barbarian {
         this.y += this.velocity.y;
         this.updateBB();
 
-        if (this.state !== 4 && !this.game.camera.title) {
+        if (this.state !== 4 && !this.game.camera.title && !PARAMS.GAMEOVER) {
 
             if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
                 this.state = 5;
@@ -182,8 +182,12 @@ class Barbarian {
                     }
                 }
             }
-        } else {
-            if (this.deadTimer === 0 && !this.game.camera.title) {
+        } else if (PARAMS.GAMEOVER) {
+            if (this.hp > 0) {
+                this.state = 0;
+                this.velocity.x = 0;
+                this.velocity.y = 0;
+            } else if (this.deadTimer === 0) {
                 this.removeFromWorld = true;
             }
         }

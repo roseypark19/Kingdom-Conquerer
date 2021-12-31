@@ -88,11 +88,20 @@ class SceneManager {
                          this.hero.BB.center.x - this.x - 2.5 * 3 * PARAMS.BLOCKWIDTH, 
                          this.hero.BB.bottom - this.y + 3 * PARAMS.BLOCKWIDTH);
         } else if (PARAMS.GAMEOVER) {
-            ctx.fillStyle = "Red";
-            ctx.font = 5 * PARAMS.BLOCKWIDTH + 'px "Press Start 2P"';
-            ctx.fillText("GAME OVER", 
-                         this.hero.BB.center.x - this.x - 4.5 * 5 * PARAMS.BLOCKWIDTH, 
-                         this.hero.BB.top - this.y);
+            if (this.hero.hp > 0) {
+                ctx.fillStyle = rgb(102, 255, 0);
+                ctx.font = 5 * PARAMS.BLOCKWIDTH + 'px "Press Start 2P"';
+                ctx.fillText("YOU WON", 
+                             this.hero.BB.center.x - this.x - 3.5 * 5 * PARAMS.BLOCKWIDTH, 
+                             this.hero.BB.top - this.y);
+                this.mmap.draw(ctx);
+            } else {
+                ctx.fillStyle = "Red";
+                ctx.font = 5 * PARAMS.BLOCKWIDTH + 'px "Press Start 2P"';
+                ctx.fillText("GAME OVER", 
+                             this.hero.BB.center.x - this.x - 4.5 * 5 * PARAMS.BLOCKWIDTH, 
+                             this.hero.BB.top - this.y);
+            }
         } else {
             this.mmap.draw(ctx);
         } 
