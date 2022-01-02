@@ -82,7 +82,7 @@ class SceneManager {
             ctx.font = 3 * PARAMS.BLOCKWIDTH + 'px "Press Start 2P"';
             ctx.fillStyle = this.game.mouse && 
                             this.game.mouse.x > this.hero.BB.center.x - this.x - 2.5 * 3 * PARAMS.BLOCKWIDTH && 
-                            this.game.mouse.x < this.hero.BB.center.x - this.x + 5 * 3 * PARAMS.BLOCKWIDTH &&
+                            this.game.mouse.x < this.hero.BB.center.x - this.x + 2.5 * 3 * PARAMS.BLOCKWIDTH &&
                             this.game.mouse.y > this.hero.BB.bottom - this.y && 
                             this.game.mouse.y < this.hero.BB.bottom - this.y + 3 * PARAMS.BLOCKWIDTH ? "Black" : "White";
             ctx.fillText("START", 
