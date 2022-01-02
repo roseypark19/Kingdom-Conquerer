@@ -58,14 +58,14 @@ class SwordedMinion {
             this.game.projectileEntities.forEach(entity => {
                 if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 5) {
                     this.shotsTaken.push(entity.id);
-                    if (this.chargeTimer === 0) {
+                    if (this.chargeTimer === 0 && this.damagedTimer === 0 && this.deadTimer === 0) {
                         this.damagedTimer = 0.6 - this.game.clockTick;
                         this.state = 4;
                         this.hitUnitVector = prevState === 0 ? { x: 0, y: 0 } : 
                                                                unitVector({ x: this.hitBB.center.x - entity.sourcePoint.x, y: this.hitBB.center.y - entity.sourcePoint.y });
-                        this.hp -= entity.damage;
                         ASSET_MANAGER.playAsset("./audio/trasgo_hit.mp3");
                     }
+                    this.hp -= entity.damage;
                     if (this.deadTimer === 0 && this.hp <= 0) {
                         this.deadTimer = 11 * 0.15 - this.game.clockTick;
                         this.state = 5;
@@ -283,10 +283,12 @@ class RangedMinion {
             this.game.projectileEntities.forEach(entity => {
                 if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 4) {
                     this.shotsTaken.push(entity.id);
-                    this.damagedTimer = 0.6 - this.game.clockTick;
-                    this.state = 3;
-                    this.hitUnitVector = prevState === 0 ? { x: 0, y: 0 } : 
-                                                           unitVector({ x: this.hitBB.center.x - entity.sourcePoint.x, y: this.hitBB.center.y - entity.sourcePoint.y });
+                    if (this.damagedTimer === 0 && this.deadTimer === 0) {
+                        this.damagedTimer = 0.6 - this.game.clockTick;
+                        this.state = 3;
+                        this.hitUnitVector = prevState === 0 ? { x: 0, y: 0 } : 
+                                                               unitVector({ x: this.hitBB.center.x - entity.sourcePoint.x, y: this.hitBB.center.y - entity.sourcePoint.y });
+                    }
                     this.hp -= entity.damage;
                     ASSET_MANAGER.playAsset("./audio/orc_hit.mp3");
                     if (this.deadTimer === 0 && this.hp <= 0) {

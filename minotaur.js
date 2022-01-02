@@ -59,12 +59,14 @@ class Minotaur {
             this.game.projectileEntities.forEach(entity => {
                 if (entity.friendlyProjectile === true && this.hitBB.collide(entity.hitBB) && !(this.shotsTaken.includes(entity.id)) && this.state !== 4) {
                     this.shotsTaken.push(entity.id);
-                    this.damagedTimer = 0.6 - this.game.clockTick;
-                    this.state = 3;
-                    this.charging = false;
-                    this.attackTimer = 0;
-                    this.hitUnitVector = prevState === 0 ? { x: 0, y: 0 } : 
-                                                           unitVector({ x: this.hitBB.center.x - entity.sourcePoint.x, y: this.hitBB.center.y - entity.sourcePoint.y });
+                    if (this.damagedTimer === 0 && this.deadTimer === 0) {
+                        this.damagedTimer = 0.6 - this.game.clockTick;
+                        this.state = 3;
+                        this.charging = false;
+                        this.attackTimer = 0;
+                        this.hitUnitVector = prevState === 0 ? { x: 0, y: 0 } : 
+                                                               unitVector({ x: this.hitBB.center.x - entity.sourcePoint.x, y: this.hitBB.center.y - entity.sourcePoint.y });
+                    }
                     this.hp -= entity.damage;
                     ASSET_MANAGER.playAsset("./audio/minotaur_ogre_hit.mp3");
                     if (this.deadTimer === 0 && this.hp <= 0) {
