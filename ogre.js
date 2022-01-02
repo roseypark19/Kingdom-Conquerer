@@ -58,9 +58,8 @@ class Ogre {
                     this.shotsTaken.push(entity.id);
                     this.damagedTimer = 0.6 - this.game.clockTick;
                     this.state = 3;
-                    let vector = { x: entity.sourcePoint.x - this.hitBB.center.x, y: entity.sourcePoint.y - this.hitBB.center.y };
-                    this.facing[0] = vector.y >= 0 ? 0 : 1;
-                    this.facing[1] = vector.x >= 0 ? 0 : 1;
+                    this.hitUnitVector = prevState === 0 ? { x: 0, y: 0 } : 
+                                                           unitVector({ x: this.hitBB.center.x - entity.sourcePoint.x, y: this.hitBB.center.y - entity.sourcePoint.y });
                     this.hp -= entity.damage;
                     ASSET_MANAGER.playAsset("./audio/minotaur_ogre_hit.mp3");
                     if (this.deadTimer === 0 && this.hp <= 0) {
@@ -71,6 +70,13 @@ class Ogre {
                     }
                 }
             });
+        }
+
+        if (this.state !== 4 && this.damagedTimer > 0) {
+            this.velocity.x = this.hitUnitVector.x * this.velocityConstant;
+            this.velocity.y = this.hitUnitVector.y * this.velocityConstant;
+            this.facing[0] = this.hitUnitVector.y > 0 ? 1 : 0;
+            this.facing[1] = this.hitUnitVector.x > 0 ? 1 : 0;
         }
 
         if (this.state !== 4) {

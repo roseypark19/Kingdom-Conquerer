@@ -47,22 +47,22 @@ class GameEngine {
         this.ctx.canvas.addEventListener("keydown", function(e) {
             let direction = "";
             switch (e.code) {
-                case "ArrowLeft":
+                case "ArrowLeft": e.preventDefault();
                 case "KeyA":
                     that.left = true;
                     direction = "left";
                     break;
-                case "ArrowRight":
+                case "ArrowRight": e.preventDefault();
                 case "KeyD":
                     that.right = true;
                     direction = "right";
                     break;
-                case "ArrowUp":
+                case "ArrowUp": e.preventDefault();
                 case "KeyW":
                     direction = "up";
                     that.up = true;
                     break;
-                case "ArrowDown":
+                case "ArrowDown": e.preventDefault();
                 case "KeyS":
                     direction = "down";
                     that.down = true;

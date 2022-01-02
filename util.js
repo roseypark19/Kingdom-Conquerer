@@ -55,13 +55,6 @@ function toRadians(degrees) {
     return degrees * Math.PI / 180;
 };
 
-function nearestRightAngle(degrees) {
-    let rounded = Math.round(degrees);
-    let low = Math.max(0, rounded - rounded % 90);
-    let high = Math.min(360, rounded + 90 - rounded % 90);
-    return Math.abs(rounded - low) < Math.abs(rounded - high) ? low : high;
-};
-
 function rotateImage(spritesheet, xStart, yStart, width, height, theta, scale) {
     let offscreenCanvas = document.createElement('canvas');
     let dimension = Math.max(width, height) * scale;
@@ -74,8 +67,8 @@ function rotateImage(spritesheet, xStart, yStart, width, height, theta, scale) {
     offscreenCtx.rotate(theta);
     offscreenCtx.translate(-offscreenCanvas.width / 2, -offscreenCanvas.height / 2);
     offscreenCtx.drawImage(spritesheet, xStart, yStart, width, height, 
-                           width < dimension ? (dimension - width * scale) / 2 : 0, 
-                           height < dimension ? (dimension - height * scale) / 2 : 0, width * scale, height * scale);
+                           width * scale < dimension ? (dimension - width * scale) / 2 : 0, 
+                           height * scale < dimension ? (dimension - height * scale) / 2 : 0, width * scale, height * scale);
     offscreenCtx.restore();
     return offscreenCanvas;
 };
