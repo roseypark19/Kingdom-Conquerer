@@ -148,8 +148,22 @@ class GameEngine {
     };
 
     addEntity(entity) {
-        this.entities.push(entity);
-        if (entity.hp) {
+        if (this.heroIndex !== undefined) {
+            if (entity.hasOwnProperty("hp")) {
+                this.entities.splice(this.heroIndex, 0, entity);
+                this.heroIndex++;
+            } else if (entity.hasOwnProperty("friendlyProjectile")) {
+                this.entities.splice(this.heroIndex + 1, 0, entity);
+            } else {
+                this.entities.push(entity);
+            }
+        } else {
+            this.entities.push(entity);
+            if (entity instanceof Barbarian) {
+                this.heroIndex = this.entities.length - 1;
+            }
+        }
+        if (entity.hasOwnProperty("hp")) {
             this.livingEntities.push(entity);
             this.livingCount++;
         } else if (entity.collideable) {
@@ -188,11 +202,15 @@ class GameEngine {
 
         for (let i = this.entities.length - 1; i >= 0; --i) {
             if (this.entities[i].removeFromWorld) {
-                this.updateCustomEntities(this.entities[i]);
+                let entity = this.entities[i];
+                this.updateCustomEntities(entity);
                 this.entities.splice(i, 1);
+                if (i < this.heroIndex) {
+                    this.heroIndex--;
+                }
             }
         }
-        
+
         if (!PARAMS.GAMEOVER && this.livingCount === 1 && this.camera.hero.hp > 0) {
             PARAMS.GAMEOVER = true;
             ASSET_MANAGER.pauseBackgroundMusic();

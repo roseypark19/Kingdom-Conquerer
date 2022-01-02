@@ -10,6 +10,7 @@ class SceneManager {
 
     clearEntities() {
         this.game.entities.forEach(entity => entity.removeFromWorld = true);
+        this.game.heroIndex = undefined;
     };
 
     loadLevel(level, title) {
@@ -20,7 +21,7 @@ class SceneManager {
         this.loadLayer(level.shadows, level);
         this.loadLayer(level.wall_base, level);
         this.hero = new Barbarian(this.game, PARAMS.SCALE * (level.heroSpawn.x * PARAMS.BLOCKWIDTH - 16), 
-                                             PARAMS.SCALE * (level.heroSpawn.y * PARAMS.BLOCKWIDTH - 16));
+                                  PARAMS.SCALE * (level.heroSpawn.y * PARAMS.BLOCKWIDTH - 16));
         this.game.addEntity(this.hero);
         for (let i = 0; i < level.enemySpawns.length; i++) {
             this.randomSpawn(level.enemySpawns[i], randomInt(3));
