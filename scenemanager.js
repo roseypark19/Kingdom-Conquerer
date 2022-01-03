@@ -28,6 +28,7 @@ class SceneManager {
         }
         this.loadLayer(level.wall_toppers, level);
         this.mmap = new Minimap(this.game, PARAMS.CANVAS_DIMENSION - mMapDimension() - 20, 20);
+        this.statsDisplay = new StatsDisplay(this.game, 0, 20);
         if (level.music && !this.title) {
             ASSET_MANAGER.pauseBackgroundMusic();
             ASSET_MANAGER.playAsset(level.music);
@@ -95,6 +96,7 @@ class SceneManager {
                 ctx.fillText("YOU WON", 
                              this.hero.BB.center.x - this.x - 3.5 * 5 * PARAMS.BLOCKWIDTH, 
                              this.hero.BB.top - this.y);
+                this.statsDisplay.draw(ctx);
                 this.mmap.draw(ctx);
             } else {
                 ctx.fillStyle = "Red";
@@ -104,6 +106,7 @@ class SceneManager {
                              this.hero.BB.top - this.y);
             }
         } else {
+            this.statsDisplay.draw(ctx);
             this.mmap.draw(ctx);
         } 
     };
@@ -219,5 +222,31 @@ class Minimap {
         ctx.drawImage(this.canvas, this.x + (mMapDimension() - mMapCanvasDimension()) / 2, 
                                    this.y + (mMapDimension() - mMapCanvasDimension()) / 2);
         ctx.drawImage(this.frameSprite, 479, 159, 50, 50, this.x, this.y, mMapDimension(), mMapDimension());
+    };
+};
+
+class StatsDisplay {
+
+    constructor(game, x, y) {
+        Object.assign(this, { game, x, y });
+        this.hpMpSprite = ASSET_MANAGER.getAsset("./sprites/gui/icons.png");
+        this.barSprite = ASSET_MANAGER.getAsset("./sprites/gui/bars.png");
+        this.barShadowSprite = ASSET_MANAGER.getAsset("./sprites/gui/bars_shadows.png");
+        this.frameSprite = ASSET_MANAGER.getAsset("./sprites/gui/panels_slots.png");
+    };
+
+    draw(ctx) {
+
+        const dimension = statsDisplayDimension();
+        const dimension_ratio = dimension / 25;
+
+        ctx.drawImage(this.frameSprite, 47 + 25 + 8, 159, 17, 12.5, this.x, this.y, 17 * PARAMS.SCALE, dimension / 2);
+        ctx.drawImage(this.frameSprite, 47 + 25 + 8, 159 + 25 + 12.5, 17, 12.5, this.x, this.y + dimension / 2, 17 * PARAMS.SCALE, dimension / 2);
+        ctx.drawImage(this.hpMpSprite, 41, 57, 7, 7, this.x + 12 * PARAMS.SCALE / 2 - 7 * PARAMS.SCALE / 2,
+                                                     this.y + dimension / 3 - 7 * PARAMS.SCALE / 2,
+                                                     7 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.hpMpSprite, 41, 65, 7, 7, this.x + 12 * PARAMS.SCALE / 2 - 7 * PARAMS.SCALE / 2,
+                                                     this.y + dimension * 2 / 3 - 7 * PARAMS.SCALE / 2,
+                                                     7 * PARAMS.SCALE, 7 * PARAMS.SCALE);
     };
 };

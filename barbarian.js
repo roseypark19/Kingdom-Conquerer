@@ -8,7 +8,11 @@ class Barbarian {
                         // 0, 1, 2, 3, 4, 5, 6
         this.id = ++PARAMS.LIFE_ID;
         this.maxHp = 1000;
+        this.maxMp = 1000;
+        this.mp = this.maxMp;
         this.hp = this.maxHp;
+        this.ability1Cost = 100;
+        this.ability2Cost = 250;
         this.dexterityConstant = 0.1;
         this.walkSpeed = 0.15;
         this.damagedTimer = 0;
@@ -16,12 +20,12 @@ class Barbarian {
         this.shootTimer = 0;
         this.shootFlag = false;
 
-        this.battleCryTimer = 0;
-        this.battleCryCooldown = 0;
+        this.ability1Timer = 0;
+        this.ability1Cooldown = 0;
 
-        this.thunderStrikeTimer = 0;
-        this.thunderStrikeFlag = false;
-        this.thunderStrikeCooldown = 0;
+        this.ability2Timer = 0;
+        this.ability2Flag = false;
+        this.ability2Cooldown = 0;
 
         this.velocityConstant = 4;
         this.velocity = { x : 0, y : 0 };
@@ -46,6 +50,7 @@ class Barbarian {
 
         if (this.state !== 4) {
             this.hp = Math.min(this.maxHp, this.hp + this.game.clockTick / 1 * 20);
+            this.mp = Math.min(this.maxMp, this.mp + this.game.clockTick / 1 * 25);
         }
 
         this.originalCollisionBB = this.collisionBB;
@@ -54,14 +59,14 @@ class Barbarian {
         this.damagedTimer = Math.max(0, this.damagedTimer - this.game.clockTick);
         this.shootTimer = Math.max(0, this.shootTimer - this.game.clockTick);
     
-        this.battleCryCooldown = Math.max(0, this.battleCryCooldown - this.game.clockTick);
-        this.battleCryTimer = Math.max(0, this.battleCryTimer - this.game.clockTick);
+        this.ability1Cooldown = Math.max(0, this.ability1Cooldown - this.game.clockTick);
+        this.ability1Timer = Math.max(0, this.ability1Timer - this.game.clockTick);
 
-        this.animations[1].setFrameDuration(this.battleCryCooldown > 0 && this.battleCryTimer === 0 ? this.walkSpeed / 2 : this.walkSpeed);
-        this.animations[2].setFrameDuration(this.battleCryCooldown === 0 ? this.dexterityConstant : this.dexterityConstant / 3);
+        this.animations[1].setFrameDuration(this.ability1Cooldown > 0 && this.ability1Timer === 0 ? this.walkSpeed / 2 : this.walkSpeed);
+        this.animations[2].setFrameDuration(this.ability1Cooldown === 0 ? this.dexterityConstant : this.dexterityConstant / 3);
 
-        this.thunderStrikeCooldown = Math.max(0, this.thunderStrikeCooldown - this.game.clockTick);
-        this.thunderStrikeTimer = Math.max(0, this.thunderStrikeTimer - this.game.clockTick);
+        this.ability2Cooldown = Math.max(0, this.ability2Cooldown - this.game.clockTick);
+        this.ability2Timer = Math.max(0, this.ability2Timer - this.game.clockTick);
 
         this.facing[0] = 0;
 
@@ -73,12 +78,12 @@ class Barbarian {
         if (this.state !== 4) {
             this.game.projectileEntities.forEach(entity => {
                 if (entity.friendlyProjectile === false && this.hitBB.collide(entity.hitBB) && this.state !== 4) {
-                    if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.state !== 2) {
+                    if (this.ability1Timer === 0 && this.ability2Timer === 0 && this.state !== 2) {
                         this.damagedTimer = 0.6 - this.game.clockTick;
                         this.state = 3;
                     }
                     entity.removeFromWorld = true;
-                    if (this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
+                    if (this.ability2Timer === 0 && this.ability1Timer === 0) {
                         this.hp -= entity.damage;
                         ASSET_MANAGER.playAsset("./audio/hero_hit.mp3");
                     }
@@ -129,28 +134,30 @@ class Barbarian {
 
         if (this.state !== 4 && !this.game.camera.title && !PARAMS.GAMEOVER) {
 
-            if (this.game.specialR && this.battleCryCooldown === 0 && this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
+            if (this.game.specialR && this.ability1Cooldown === 0 && this.ability1Timer === 0 && this.ability2Timer === 0 && this.mp >= this.ability1Cost) {
                 this.state = 5;
                 this.animations[1].setFrameDuration(this.walkSpeed / 2);
                 this.animations[2].setFrameDuration(this.dexterityConstant / 3);
-                this.battleCryTimer = 1.1 - this.game.clockTick;
-                this.battleCryCooldown = 5 - this.game.clockTick;
+                this.ability1Timer = 1.1 - this.game.clockTick;
+                this.ability1Cooldown = 5 - this.game.clockTick;
+                this.mp -= this.ability1Cost;
             }
 
-            if (this.game.specialF && this.thunderStrikeCooldown === 0 && this.thunderStrikeTimer === 0 && this.battleCryTimer === 0) {
+            if (this.game.specialF && this.ability2Cooldown === 0 && this.ability2Timer === 0 && this.ability1Timer === 0 && this.mp >= this.ability2Cost) {
                 this.state = 6;
-                this.thunderStrikeFlag = true;
-                this.thunderStrikeTimer = 1.7 - this.game.clockTick;
-                this.thunderStrikeCooldown = 1.7 - this.game.clockTick;
+                this.ability2Flag = true;
+                this.ability2Timer = 1.7 - this.game.clockTick;
+                this.ability2Cooldown = 1.7 - this.game.clockTick;
+                this.mp -= this.ability2Cost;
             }
 
-            if (this.thunderStrikeTimer <= 0.1 && this.thunderStrikeTimer > 0 && this.thunderStrikeFlag) {
-                this.thunderStrikeFlag = false;
+            if (this.ability2Timer <= 0.1 && this.ability2Timer > 0 && this.ability2Flag) {
+                this.ability2Flag = false;
                 this.spawnBeams();
                 ASSET_MANAGER.playAsset("./audio/lightning.mp3")
             }
 
-            if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0 && this.damagedTimer === 0) {
+            if (this.ability1Timer === 0 && this.ability2Timer === 0 && this.damagedTimer === 0) {
                 this.state = magnitude(this.velocity) === 0 ? 0 : 1;
             }
 
@@ -158,7 +165,7 @@ class Barbarian {
                 let mousePoint = this.game.mouse ? this.game.mouse : this.game.click;
                 this.facing[0] = mousePoint.y < this.BB.center.y - this.game.camera.y ? 1 : 0;
                 this.facing[1] = mousePoint.x < this.BB.center.x - this.game.camera.x ? 1 : 0; 
-                if (this.battleCryTimer === 0 && this.thunderStrikeTimer === 0) {
+                if (this.ability1Timer === 0 && this.ability2Timer === 0) {
                     this.state = 2;
                     if (this.shootTimer === 0) {
                         this.shootTimer = this.animations[2].frameDuration * 6 - this.game.clockTick;

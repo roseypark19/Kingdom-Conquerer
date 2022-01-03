@@ -3,9 +3,9 @@ const PARAMS = {
     DEBUG : false,
     DEBUG_WIDTH : 1,
     DEBUG_COLOR: "Red",
-    CANVAS_DIMENSION : 900,
+    CANVAS_DIMENSION : 1000,
     SCALE : 4,
-    MMAP_SCALE: 0.5,
+    MMAP_SCALE: 0.4,
     GAMEOVER: false,
     LIFE_ID: 0,
     SHOT_ID: 0,
@@ -74,7 +74,11 @@ function rotateImage(spritesheet, xStart, yStart, width, height, theta, scale) {
 };
 
 function mMapDimension() {
-    return PARAMS.CANVAS_DIMENSION / 4.5;
+    return 50 * PARAMS.SCALE;
+};
+
+function statsDisplayDimension() {
+    return 25 * PARAMS.SCALE;
 };
 
 function mMapCanvasDimension() {

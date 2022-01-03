@@ -20,6 +20,9 @@ ASSET_MANAGER.queueDownload("./sprites/level/floor.png");
 ASSET_MANAGER.queueDownload("./sprites/level/shadows.png");
 ASSET_MANAGER.queueDownload("./sprites/level/walls.png");
 ASSET_MANAGER.queueDownload("./sprites/gui/panels_slots.png");
+ASSET_MANAGER.queueDownload("./sprites/gui/icons.png");
+ASSET_MANAGER.queueDownload("./sprites/gui/bars.png");
+ASSET_MANAGER.queueDownload("./sprites/gui/bars_shadows.png");
 
 // audio
 ASSET_MANAGER.queueDownload("./audio/dungeon.mp3");
