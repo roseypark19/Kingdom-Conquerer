@@ -54,7 +54,7 @@ class SceneManager {
         let midpoint = { x : PARAMS.CANVAS_DIMENSION / 2, y : PARAMS.CANVAS_DIMENSION / 2 };
         this.x = this.hero.BB.center.x - midpoint.x;
         this.y = this.hero.BB.center.y - midpoint.y;
-        midpoint = { x : mMapCanvasDimension() / 2, y : mMapCanvasDimension() / 2 };
+        midpoint = { x : mMapDimension() / 2, y : mMapDimension() / 2 };
         this.mmX = this.hero.BB.center.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - midpoint.x;
         this.mmY = this.hero.BB.center.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - midpoint.y;
 
@@ -203,25 +203,43 @@ class Minimap {
     constructor(game, x, y) {
         Object.assign(this, { game, x, y });
         this.canvas = document.createElement("canvas");
-        this.canvas.width = mMapCanvasDimension();
-        this.canvas.height = mMapCanvasDimension();
-        this.frameSprite = ASSET_MANAGER.getAsset("./sprites/gui/panels_slots.png");
+        this.canvas.width = mMapDimension();
+        this.canvas.height = mMapDimension();
+        this.frameShadowSprite = ASSET_MANAGER.getAsset("./sprites/gui/frames_shadows.png");
+        this.frameSprite = ASSET_MANAGER.getAsset("./sprites/gui/frames.png");
     };
 
     draw(ctx) {
         let context = this.canvas.getContext("2d");
+        context.clearRect(0, 0, mMapDimension(), mMapDimension());
+
+        context.beginPath();
+        context.strokeStyle = "Black";
         context.fillStyle = "Black";
-        context.fillRect(0, 0, mMapCanvasDimension(), mMapCanvasDimension());
+        context.arc(this.canvas.width / 2, this.canvas.height / 2, 15 * PARAMS.GUI_SCALE, 0, 2 * Math.PI);
+        context.stroke();
+        context.fill();
+
         this.game.entities.forEach(entity => {
             if (entity.drawMmap && 
-                (Math.abs(this.game.camera.hero.BB.center.x - entity.BB.center.x) <= PARAMS.CANVAS_DIMENSION * 0.5 / PARAMS.MMAP_SCALE &&
-                 Math.abs(this.game.camera.hero.BB.center.y - entity.BB.center.y) <= PARAMS.CANVAS_DIMENSION * 0.5 / PARAMS.MMAP_SCALE)) {
+                distance(entity.BB.center, this.game.camera.hero.BB.center) < PARAMS.BLOCKWIDTH * 14.466 * (PARAMS.GUI_SCALE / PARAMS.MMAP_SCALE) / 2) {
                 entity.drawMmap(context);
             }
         });
-        ctx.drawImage(this.canvas, this.x + (mMapDimension() - mMapCanvasDimension()) / 2, 
-                                   this.y + (mMapDimension() - mMapCanvasDimension()) / 2);
-        ctx.drawImage(this.frameSprite, 479, 159, 50, 50, this.x, this.y, mMapDimension(), mMapDimension());
+
+        // draw minimap shadows
+        ctx.drawImage(this.frameShadowSprite, 479, 271, 17, 17, this.x, this.y, 17 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.frameShadowSprite, 479 + 33, 271, 17, 17, this.x + 17 * PARAMS.GUI_SCALE, this.y, 17 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.frameShadowSprite, 479, 271 + 33, 17, 17, this.x, this.y + 17 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.frameShadowSprite, 479 + 33, 271 + 33, 17, 17, this.x + 17 * PARAMS.GUI_SCALE, this.y + 17 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE);
+
+        ctx.drawImage(this.canvas, this.x, this.y);
+
+        // draw minimap frame
+        ctx.drawImage(this.frameSprite, 480, 272, 16, 16, this.x + PARAMS.GUI_SCALE, this.y + PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.frameSprite, 480 + 32, 272, 16, 16, this.x + 17 * PARAMS.GUI_SCALE, this.y + PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.frameSprite, 480, 272 + 32, 16, 16, this.x + PARAMS.GUI_SCALE, this.y + 17 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.frameSprite, 480 + 32, 272 + 32, 16, 16, this.x + 17 * PARAMS.GUI_SCALE, this.y + 17 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE);
     };
 };
 
@@ -232,7 +250,8 @@ class StatsDisplay {
         this.hpMpSprite = ASSET_MANAGER.getAsset("./sprites/gui/icons.png");
         this.barSprite = ASSET_MANAGER.getAsset("./sprites/gui/bars.png");
         this.barShadowSprite = ASSET_MANAGER.getAsset("./sprites/gui/bars_shadows.png");
-        this.frameSprite = ASSET_MANAGER.getAsset("./sprites/gui/panels_slots.png");
+        this.frameSprite = ASSET_MANAGER.getAsset("./sprites/gui/frames.png");
+        this.frameShadowSprite = ASSET_MANAGER.getAsset("./sprites/gui/frames_shadows.png");
     };
 
     draw(ctx) {
@@ -240,47 +259,49 @@ class StatsDisplay {
         const dimension = statsDisplayDimension();
         const hero = this.game.camera.hero;
 
+        // frame shadow
+        ctx.drawImage(this.frameShadowSprite, 47 + 25 + 8, 159, 17, 12.5, this.x, this.y, 17 * PARAMS.GUI_SCALE, dimension / 2);
+        ctx.drawImage(this.frameShadowSprite, 47 + 25 + 8, 159 + 25 + 12.5, 17, 12.5, this.x, this.y + dimension / 2, 17 * PARAMS.GUI_SCALE, dimension / 2);
+
         // hp bar shadow
-        ctx.drawImage(this.barShadowSprite, 87, 36, 17, 7, this.x + 10 * PARAMS.SCALE, this.y + 4.75 * PARAMS.SCALE, 17 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 17) * PARAMS.SCALE, this.y + 4.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 33) * PARAMS.SCALE, this.y + 4.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-        ctx.drawImage(this.barShadowSprite, 87 + 17, 36, 17, 7, this.x + (10 + 49) * PARAMS.SCALE, this.y + 4.75 * PARAMS.SCALE, 17 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.barShadowSprite, 87, 36, 17, 7, this.x + 10 * PARAMS.GUI_SCALE, this.y + 5 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 17) * PARAMS.GUI_SCALE, this.y + 5 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 33) * PARAMS.GUI_SCALE, this.y + 5 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 17, 36, 17, 7, this.x + (10 + 49) * PARAMS.GUI_SCALE, this.y + 5 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
 
         // mp bar shadow
-        ctx.drawImage(this.barShadowSprite, 87, 36, 17, 7, this.x + 10 * PARAMS.SCALE, this.y + 13.25 * PARAMS.SCALE, 17 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 17) * PARAMS.SCALE, this.y + 13.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 33) * PARAMS.SCALE, this.y + 13.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-        ctx.drawImage(this.barShadowSprite, 87 + 17, 36, 17, 7, this.x + (10 + 49) * PARAMS.SCALE, this.y + 13.25 * PARAMS.SCALE, 17 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.barShadowSprite, 87, 36, 17, 7, this.x + 10 * PARAMS.GUI_SCALE, this.y + 13 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 17) * PARAMS.GUI_SCALE, this.y + 13 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 33) * PARAMS.GUI_SCALE, this.y + 13 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 17, 36, 17, 7, this.x + (10 + 49) * PARAMS.GUI_SCALE, this.y + 13 * PARAMS.GUI_SCALE, 17 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
 
         // frame and icons
-        ctx.drawImage(this.frameSprite, 47 + 25 + 8, 159, 17, 12.5, this.x, this.y, 17 * PARAMS.SCALE, dimension / 2);
-        ctx.drawImage(this.frameSprite, 47 + 25 + 8, 159 + 25 + 12.5, 17, 12.5, this.x, this.y + dimension / 2, 17 * PARAMS.SCALE, dimension / 2);
-        ctx.drawImage(this.hpMpSprite, 41, 57, 7, 7, this.x + 3 * PARAMS.SCALE,
-                                                     this.y + 4.75 * PARAMS.SCALE,
-                                                     7 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-        ctx.drawImage(this.hpMpSprite, 41, 65, 7, 7, this.x + 3 * PARAMS.SCALE,
-                                                     this.y + 13.25 * PARAMS.SCALE,
-                                                     7 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-
-
+        ctx.drawImage(this.frameSprite, 48 + 32, 160, 16, 12, this.x, this.y + PARAMS.GUI_SCALE, dimension - 9 * PARAMS.GUI_SCALE, (dimension - 2 * PARAMS.GUI_SCALE) / 2);
+        ctx.drawImage(this.frameSprite, 48 + 32, 160 + 36, 16, 12, this.x, this.y + dimension / 2, dimension - 9 * PARAMS.GUI_SCALE, (dimension - 2 * PARAMS.GUI_SCALE) / 2);
+        ctx.drawImage(this.hpMpSprite, 41, 57, 7, 7, this.x + 3 * PARAMS.GUI_SCALE,
+                                                     this.y + 5 * PARAMS.GUI_SCALE,
+                                                     7 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.hpMpSprite, 41, 65, 7, 7, this.x + 3 * PARAMS.GUI_SCALE,
+                                                     this.y + 13 * PARAMS.GUI_SCALE,
+                                                     7 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
                     
         // hp bar
-        ctx.fillStyle = rgb(198, 27, 58);
-        ctx.fillRect(this.x + 13 * PARAMS.SCALE, this.y + 6.75 * PARAMS.SCALE, 60 * hero.hp / hero.maxHp * PARAMS.SCALE, 3 * PARAMS.SCALE);
+        ctx.fillStyle = rgba(198, 27, 58, 10);
+        ctx.fillRect(this.x + 13 * PARAMS.GUI_SCALE, this.y + 7 * PARAMS.GUI_SCALE, 60 * hero.hp / hero.maxHp * PARAMS.GUI_SCALE, 3 * PARAMS.GUI_SCALE);
 
-        ctx.drawImage(this.barSprite, 88, 37, 16, 5, this.x + 11 * PARAMS.SCALE, this.y + 5.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
-        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 16) * PARAMS.SCALE, this.y + 5.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
-        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 32) * PARAMS.SCALE, this.y + 5.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
-        ctx.drawImage(this.barSprite, 88 + 16, 37, 16, 5, this.x + (11 + 48) * PARAMS.SCALE, this.y + 5.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+        ctx.drawImage(this.barSprite, 88, 37, 16, 5, this.x + 11 * PARAMS.GUI_SCALE, this.y + 6 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 16) * PARAMS.GUI_SCALE, this.y + 6 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 32) * PARAMS.GUI_SCALE, this.y + 6 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barSprite, 88 + 16, 37, 16, 5, this.x + (11 + 48) * PARAMS.GUI_SCALE, this.y + 6 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
 
         // mp bar
         ctx.fillStyle = rgb(101, 219, 241);
-        ctx.fillRect(this.x + 13 * PARAMS.SCALE, this.y + 15.25 * PARAMS.SCALE, 60 * hero.mp / hero.maxMp * PARAMS.SCALE, 3 * PARAMS.SCALE);
+        ctx.fillRect(this.x + 13 * PARAMS.GUI_SCALE, this.y + 15 * PARAMS.GUI_SCALE, 60 * hero.mp / hero.maxMp * PARAMS.GUI_SCALE, 3 * PARAMS.GUI_SCALE);
 
-        ctx.drawImage(this.barSprite, 88, 37, 16, 5, this.x + 11 * PARAMS.SCALE, this.y + 14.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
-        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 16) * PARAMS.SCALE, this.y + 14.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
-        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 32) * PARAMS.SCALE, this.y + 14.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
-        ctx.drawImage(this.barSprite, 88 + 16, 37, 16, 5, this.x + (11 + 48) * PARAMS.SCALE, this.y + 14.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+        ctx.drawImage(this.barSprite, 88, 37, 16, 5, this.x + 11 * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 16) * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 32) * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barSprite, 88 + 16, 37, 16, 5, this.x + (11 + 48) * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
 
     };
 };

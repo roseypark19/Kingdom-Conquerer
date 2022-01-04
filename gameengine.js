@@ -136,7 +136,12 @@ class GameEngine {
         this.ctx.canvas.addEventListener("wheel", function (e) {
             //console.log(getXandY(e));
             that.wheel = e;
-            //       console.log(e.wheelDelta);
+            //console.log(e.wheelDelta);
+            if (e.wheelDelta > 0) {
+                PARAMS.MMAP_SCALE = Math.min(0.625, PARAMS.MMAP_SCALE + 0.065);
+            } else if (e.wheelDelta < 0) {
+                PARAMS.MMAP_SCALE = Math.max(0.3, PARAMS.MMAP_SCALE - 0.065);
+            }
             e.preventDefault();
         }, false);
 

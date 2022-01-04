@@ -274,12 +274,12 @@ class Barbarian {
     drawMmap(ctx) {
         ctx.fillStyle = "Blue";
         ctx.strokeStyle = "Blue";
-        ctx.strokeRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 12 * PARAMS.MMAP_SCALE, 
-                       this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 12 * PARAMS.MMAP_SCALE, 
-                       8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
-        ctx.fillRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 12 * PARAMS.MMAP_SCALE, 
-                     this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 12 * PARAMS.MMAP_SCALE, 
-                     8 * PARAMS.MMAP_SCALE, 8 * PARAMS.MMAP_SCALE);
+        ctx.strokeRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 8 * PARAMS.MMAP_SCALE, 
+                       this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 8 * PARAMS.MMAP_SCALE, 
+                       16 * PARAMS.MMAP_SCALE, 16 * PARAMS.MMAP_SCALE);
+        ctx.fillRect(this.x / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmX + 8 * PARAMS.MMAP_SCALE, 
+                     this.y / (PARAMS.SCALE / PARAMS.MMAP_SCALE) - this.game.camera.mmY + 8 * PARAMS.MMAP_SCALE, 
+                     16 * PARAMS.MMAP_SCALE, 16 * PARAMS.MMAP_SCALE);
     };
 };
 

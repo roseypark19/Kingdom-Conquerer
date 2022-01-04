@@ -5,7 +5,8 @@ const PARAMS = {
     DEBUG_COLOR: "Red",
     CANVAS_DIMENSION : 1000,
     SCALE : 4,
-    MMAP_SCALE: 0.4,
+    GUI_SCALE : 6,
+    MMAP_SCALE: 0.4625,
     GAMEOVER: false,
     LIFE_ID: 0,
     SHOT_ID: 0,
@@ -23,6 +24,11 @@ function randomInt(n) {
 // returns a string that can be used as a rgb web color
 function rgb(r, g, b) {
     return "rgb(" + r + "," + g + "," + b + ")";
+};
+
+// returns a string that can be used as a rgba web color
+function rgba(r, g, b, a) {
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 };
 
 // returns a string that can be used as a hsl web color
@@ -74,15 +80,11 @@ function rotateImage(spritesheet, xStart, yStart, width, height, theta, scale) {
 };
 
 function mMapDimension() {
-    return 50 * PARAMS.SCALE;
+    return 34 * PARAMS.GUI_SCALE;
 };
 
 function statsDisplayDimension() {
-    return 25 * PARAMS.SCALE;
-};
-
-function mMapCanvasDimension() {
-    return mMapDimension() * 21 / 25;
+    return 25 * PARAMS.GUI_SCALE;
 };
 
 // creates an alias for requestAnimationFrame for backwards compatibility
