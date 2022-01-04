@@ -247,6 +247,8 @@ class StatsDisplay {
 
     constructor(game, x, y) {
         Object.assign(this, { game, x, y });
+        this.flickerTimer = 0;
+        this.flickerFlag = false;
         this.hpMpSprite = ASSET_MANAGER.getAsset("./sprites/gui/icons.png");
         this.barSprite = ASSET_MANAGER.getAsset("./sprites/gui/bars.png");
         this.barShadowSprite = ASSET_MANAGER.getAsset("./sprites/gui/bars_shadows.png");
@@ -256,6 +258,7 @@ class StatsDisplay {
 
     draw(ctx) {
 
+        this.flickerTimer = Math.max(0, this.flickerTimer - this.game.clockTick);
         const dimension = statsDisplayDimension();
         const hero = this.game.camera.hero;
 
@@ -286,7 +289,15 @@ class StatsDisplay {
                                                      7 * PARAMS.GUI_SCALE, 7 * PARAMS.GUI_SCALE);
                     
         // hp bar
-        ctx.fillStyle = rgba(198, 27, 58, 10);
+        if (hero.hp / hero.maxHp * 100 > 25) {
+            this.flickerFlag = false;
+        }
+        if (hero.hp / hero.maxHp * 100 <= 25 && this.flickerTimer === 0) {
+            this.flickerTimer = 0.25;
+            this.flickerFlag = !this.flickerFlag;
+        }
+
+        ctx.fillStyle = this.flickerFlag ? rgb(228, 84, 110) : rgb(198, 27, 58);
         ctx.fillRect(this.x + 13 * PARAMS.GUI_SCALE, this.y + 7 * PARAMS.GUI_SCALE, 60 * hero.hp / hero.maxHp * PARAMS.GUI_SCALE, 3 * PARAMS.GUI_SCALE);
 
         ctx.drawImage(this.barSprite, 88, 37, 16, 5, this.x + 11 * PARAMS.GUI_SCALE, this.y + 6 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
