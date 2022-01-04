@@ -238,15 +238,49 @@ class StatsDisplay {
     draw(ctx) {
 
         const dimension = statsDisplayDimension();
-        const dimension_ratio = dimension / 25;
+        const hero = this.game.camera.hero;
 
+        // hp bar shadow
+        ctx.drawImage(this.barShadowSprite, 87, 36, 17, 7, this.x + 10 * PARAMS.SCALE, this.y + 4.75 * PARAMS.SCALE, 17 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 17) * PARAMS.SCALE, this.y + 4.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 33) * PARAMS.SCALE, this.y + 4.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 17, 36, 17, 7, this.x + (10 + 49) * PARAMS.SCALE, this.y + 4.75 * PARAMS.SCALE, 17 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+
+        // mp bar shadow
+        ctx.drawImage(this.barShadowSprite, 87, 36, 17, 7, this.x + 10 * PARAMS.SCALE, this.y + 13.25 * PARAMS.SCALE, 17 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 17) * PARAMS.SCALE, this.y + 13.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 9, 36, 16, 7, this.x + (10 + 33) * PARAMS.SCALE, this.y + 13.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+        ctx.drawImage(this.barShadowSprite, 87 + 17, 36, 17, 7, this.x + (10 + 49) * PARAMS.SCALE, this.y + 13.25 * PARAMS.SCALE, 17 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+
+        // frame and icons
         ctx.drawImage(this.frameSprite, 47 + 25 + 8, 159, 17, 12.5, this.x, this.y, 17 * PARAMS.SCALE, dimension / 2);
         ctx.drawImage(this.frameSprite, 47 + 25 + 8, 159 + 25 + 12.5, 17, 12.5, this.x, this.y + dimension / 2, 17 * PARAMS.SCALE, dimension / 2);
-        ctx.drawImage(this.hpMpSprite, 41, 57, 7, 7, this.x + 12 * PARAMS.SCALE / 2 - 7 * PARAMS.SCALE / 2,
-                                                     this.y + dimension / 3 - 7 * PARAMS.SCALE / 2,
+        ctx.drawImage(this.hpMpSprite, 41, 57, 7, 7, this.x + 3 * PARAMS.SCALE,
+                                                     this.y + 4.75 * PARAMS.SCALE,
                                                      7 * PARAMS.SCALE, 7 * PARAMS.SCALE);
-        ctx.drawImage(this.hpMpSprite, 41, 65, 7, 7, this.x + 12 * PARAMS.SCALE / 2 - 7 * PARAMS.SCALE / 2,
-                                                     this.y + dimension * 2 / 3 - 7 * PARAMS.SCALE / 2,
+        ctx.drawImage(this.hpMpSprite, 41, 65, 7, 7, this.x + 3 * PARAMS.SCALE,
+                                                     this.y + 13.25 * PARAMS.SCALE,
                                                      7 * PARAMS.SCALE, 7 * PARAMS.SCALE);
+
+
+                    
+        // hp bar
+        ctx.fillStyle = rgb(198, 27, 58);
+        ctx.fillRect(this.x + 13 * PARAMS.SCALE, this.y + 6.75 * PARAMS.SCALE, 60 * hero.hp / hero.maxHp * PARAMS.SCALE, 3 * PARAMS.SCALE);
+
+        ctx.drawImage(this.barSprite, 88, 37, 16, 5, this.x + 11 * PARAMS.SCALE, this.y + 5.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 16) * PARAMS.SCALE, this.y + 5.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 32) * PARAMS.SCALE, this.y + 5.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+        ctx.drawImage(this.barSprite, 88 + 16, 37, 16, 5, this.x + (11 + 48) * PARAMS.SCALE, this.y + 5.75 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+
+        // mp bar
+        ctx.fillStyle = rgb(101, 219, 241);
+        ctx.fillRect(this.x + 13 * PARAMS.SCALE, this.y + 15.25 * PARAMS.SCALE, 60 * hero.mp / hero.maxMp * PARAMS.SCALE, 3 * PARAMS.SCALE);
+
+        ctx.drawImage(this.barSprite, 88, 37, 16, 5, this.x + 11 * PARAMS.SCALE, this.y + 14.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 16) * PARAMS.SCALE, this.y + 14.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+        ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 32) * PARAMS.SCALE, this.y + 14.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+        ctx.drawImage(this.barSprite, 88 + 16, 37, 16, 5, this.x + (11 + 48) * PARAMS.SCALE, this.y + 14.25 * PARAMS.SCALE, 16 * PARAMS.SCALE, 5 * PARAMS.SCALE);
+
     };
 };

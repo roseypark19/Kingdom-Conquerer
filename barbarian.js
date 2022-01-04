@@ -257,7 +257,7 @@ class Barbarian {
                 ctx.fillStyle = PARAMS.MED_HP_COLOR;
             }
             ctx.fillRect(this.BB.center.x - 4 * PARAMS.SCALE - this.game.camera.x, 
-                           this.hitBB.bottom - this.game.camera.y, 8 * PARAMS.SCALE * percentage, 1 * PARAMS.SCALE);
+                         this.hitBB.bottom - this.game.camera.y, 8 * PARAMS.SCALE * percentage, 1 * PARAMS.SCALE);
             ctx.strokeRect(this.BB.center.x - 4 * PARAMS.SCALE - this.game.camera.x, 
                            this.hitBB.bottom - this.game.camera.y, 8 * PARAMS.SCALE, 1 * PARAMS.SCALE);
         }
