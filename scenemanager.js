@@ -356,13 +356,14 @@ class AbilityDisplay {
         const drawScale = PARAMS.GUI_SCALE - 4;
         x = this.x + (5 + spacing / 2) * PARAMS.GUI_SCALE;
         let y = this.y + dimension / 2;
-        ctx.fillStyle = "Black";
-        ctx.font = "bold " + 10 + 'px "Press Start 2P"';
+        ctx.fillStyle = ctx.strokeStyle = "Black";
+        ctx.font = 10 + 'px "Press Start 2P"';
         for (let i = 0; i < hero.abilityData.length; i++) {
             let data = hero.abilityData[i];
             ctx.drawImage(hero.abilitySpritesheet, data.x, data.y, 32, 32, 
                           x - 16 * drawScale, y - hero.spriteCenter * drawScale, 32 * drawScale, 32 * drawScale);
             ctx.fillText(data.button, x + 6 * drawScale, y + 10 * drawScale);
+            ctx.strokeText(data.button, x + 6 * drawScale, y + 10 * drawScale);
             x += spacing * PARAMS.GUI_SCALE;
         }
     };
