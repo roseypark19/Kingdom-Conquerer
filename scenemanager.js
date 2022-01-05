@@ -225,7 +225,7 @@ class Minimap {
 
         this.game.entities.forEach(entity => {
             if (entity.drawMmap && 
-                distance(entity.BB.center, this.game.camera.hero.BB.center) < PARAMS.BLOCKWIDTH * 14.466 * (PARAMS.GUI_SCALE / PARAMS.MMAP_SCALE) / 2) {
+                distance(entity.BB.center, this.game.camera.hero.BB.center) / PARAMS.SCALE <= 14.5 * PARAMS.GUI_SCALE / PARAMS.MMAP_SCALE) {
                 entity.drawMmap(context);
             }
         });
