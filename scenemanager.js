@@ -29,6 +29,7 @@ class SceneManager {
         this.loadLayer(level.wall_toppers, level);
         this.mmap = new Minimap(this.game, PARAMS.CANVAS_DIMENSION - mMapDimension() - 20, 20);
         this.statsDisplay = new StatsDisplay(this.game, 0, 20);
+        this.abilityDisplay = new AbilityDisplay(this.game, 20, PARAMS.CANVAS_DIMENSION - abilityDisplayDimension() - 20);
         if (level.music && !this.title) {
             ASSET_MANAGER.pauseBackgroundMusic();
             ASSET_MANAGER.playAsset(level.music);
@@ -97,6 +98,7 @@ class SceneManager {
                              this.hero.BB.center.x - this.x - 3.5 * 5 * PARAMS.BLOCKWIDTH, 
                              this.hero.BB.top - this.y);
                 this.statsDisplay.draw(ctx);
+                this.abilityDisplay.draw(ctx);
                 this.mmap.draw(ctx);
             } else {
                 ctx.fillStyle = "Red";
@@ -107,6 +109,7 @@ class SceneManager {
             }
         } else {
             this.statsDisplay.draw(ctx);
+            this.abilityDisplay.draw(ctx);
             this.mmap.draw(ctx);
         } 
     };
@@ -312,7 +315,55 @@ class StatsDisplay {
         ctx.drawImage(this.barSprite, 88, 37, 16, 5, this.x + 11 * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
         ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 16) * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
         ctx.drawImage(this.barSprite, 88 + 8, 37, 16, 5, this.x + (11 + 32) * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
-        ctx.drawImage(this.barSprite, 88 + 16, 37, 16, 5, this.x + (11 + 48) * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);
+        ctx.drawImage(this.barSprite, 88 + 16, 37, 16, 5, this.x + (11 + 48) * PARAMS.GUI_SCALE, this.y + 14 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE, 5 * PARAMS.GUI_SCALE);      
+    };
+};
 
+class AbilityDisplay {
+
+    constructor(game, x, y) {
+        Object.assign(this, { game, x, y });
+        this.frameSprite = ASSET_MANAGER.getAsset("./sprites/gui/frames.png");
+        this.frameShadowSprite = ASSET_MANAGER.getAsset("./sprites/gui/frames_shadows.png");
+        this.characterSprite = ASSET_MANAGER.getAsset("./sprites/barbarian/barbarian.png");
+    };
+
+    draw(ctx) {
+
+        const dimension = abilityDisplayDimension();
+        const hero = this.game.camera.hero;
+        const spacing = 10;
+
+        // frame shadow
+        ctx.drawImage(this.frameShadowSprite, 47, 239, 5, 18, this.x, this.y, 5 * PARAMS.GUI_SCALE, dimension);
+        let x = this.x + 5 * PARAMS.GUI_SCALE;
+        for (let i = 0; i < hero.abilityData.length; i++) {
+            ctx.drawImage(this.frameShadowSprite, 50, 239, spacing, 18, x, this.y, spacing * PARAMS.GUI_SCALE, dimension);
+            x += spacing * PARAMS.GUI_SCALE;
+        }
+        ctx.drawImage(this.frameShadowSprite, 92, 239, 5, 18, x, this.y, 5 * PARAMS.GUI_SCALE, dimension);
+
+        // frame
+        ctx.drawImage(this.frameSprite, 48, 128, 4, 16, this.x + PARAMS.GUI_SCALE, this.y + PARAMS.GUI_SCALE, 4 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE);
+        x = this.x + 5 * PARAMS.GUI_SCALE;
+        for (let i = 0; i < hero.abilityData.length; i++) {
+            ctx.drawImage(this.frameSprite, 52, 128, spacing, 16, x, this.y + PARAMS.GUI_SCALE, spacing * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE);
+            x += spacing * PARAMS.GUI_SCALE;
+        }
+        ctx.drawImage(this.frameSprite, 92, 128, 4, 16, x, this.y + PARAMS.GUI_SCALE, 4 * PARAMS.GUI_SCALE, 16 * PARAMS.GUI_SCALE);
+
+        // ability icons and buttons
+        const drawScale = PARAMS.GUI_SCALE - 4;
+        x = this.x + (5 + spacing / 2) * PARAMS.GUI_SCALE;
+        let y = this.y + dimension / 2;
+        ctx.fillStyle = "Black";
+        ctx.font = "bold " + 10 + 'px "Press Start 2P"';
+        for (let i = 0; i < hero.abilityData.length; i++) {
+            let data = hero.abilityData[i];
+            ctx.drawImage(hero.abilitySpritesheet, data.x, data.y, 32, 32, 
+                          x - 16 * drawScale, y - hero.spriteCenter * drawScale, 32 * drawScale, 32 * drawScale);
+            ctx.fillText(data.button, x + 6 * drawScale, y + 10 * drawScale);
+            x += spacing * PARAMS.GUI_SCALE;
+        }
     };
 };

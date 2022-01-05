@@ -27,6 +27,10 @@ class Barbarian {
         this.ability2Flag = false;
         this.ability2Cooldown = 0;
 
+        this.abilitySpritesheet = ASSET_MANAGER.getAsset("./sprites/barbarian/abilities.png");
+        this.abilityData = [{ x: 32, y: 0, button: "R"}, { x: 64, y: 0, button: "F"}];
+        this.spriteCenter = 12.5;
+
         this.velocityConstant = 4;
         this.velocity = { x : 0, y : 0 };
         this.animations = [];

@@ -87,6 +87,10 @@ function statsDisplayDimension() {
     return 25 * PARAMS.GUI_SCALE;
 };
 
+function abilityDisplayDimension() {
+    return 18 * PARAMS.GUI_SCALE;
+};
+
 // creates an alias for requestAnimationFrame for backwards compatibility
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
