@@ -40,9 +40,8 @@ class AnimationGroup {
     };
 
     drawFrame(tick, ctx, x, y, scale, vertFace = 0, horizFace = 0) {
-        if (scale === PARAMS.SCALE) {
-            this.elapsedTime += tick;
-        }
+	
+	this.elapsedTime += tick;
 
         if (this.isDone()) {
             if (this.loop) {
